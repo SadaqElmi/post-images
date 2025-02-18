@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import Posts from "./posts/page";
 
 const Users = () => {
   return (
-	<div>
-	  <h1>User</h1>
-	</div>
-  )
-}
+    <div className="flex justify-center flex-col w-full items-center">
+      <Posts />
+    </div>
+  );
+};
 
-export default Users
+export default Users;
