@@ -1,3 +1,5 @@
+"use client";
+import { SessionProvider } from "next-auth/react";
 import Header from "./components/header";
 
 export default function RootLayout({
@@ -8,10 +10,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="fixed z-50 w-full bg-white">
-          <Header />
-        </div>
-        <div className="pt-20">{children}</div>
+        <SessionProvider>
+          <div className="fixed z-50 w-full bg-white">
+            <Header />
+          </div>
+          <div className="pt-20">{children}</div>
+        </SessionProvider>
       </body>
     </html>
   );
