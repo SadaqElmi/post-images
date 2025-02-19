@@ -8,7 +8,6 @@ const UserSchema = new Schema(
     password: { type: String, required: false },
     avatar: {
       type: String,
-      default: "https://github.com/shadcn.png",
     },
     role: { type: String, enum: ["user", "admin"], default: "user" },
   },

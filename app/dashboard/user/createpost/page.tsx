@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import Image from "next/image";
+import useAuthStore from "@/app/store/authStore";
 
 const CreatePost = () => {
+  const { user } = useAuthStore();
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [description, setDescription] = useState("");
@@ -16,6 +20,8 @@ const CreatePost = () => {
       setImagePreview(URL.createObjectURL(file));
     }
   };
+
+  const handleSubmit = async () => {};
 
   return (
     <div className="flex justify-center items-center ">
@@ -43,6 +49,7 @@ const CreatePost = () => {
         )}
 
         <button
+          onClick={handleSubmit}
           disabled={loading}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >

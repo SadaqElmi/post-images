@@ -1,10 +1,10 @@
-import NextAuth from "next-auth";
+//import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/app/models/User";
 import { connectDB } from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
-import { JWT } from "next-auth/jwt";
+import NextAuth from "next-auth";
 
 const handler = NextAuth({
   providers: [
@@ -19,8 +19,9 @@ const handler = NextAuth({
         const user = await User.findOne({ email: credentials?.email });
 
         if (
+          credentials &&
           user &&
-          (await bcrypt.compare(credentials!.password, user.password))
+          (await bcrypt.compare(credentials.password, user.password))
         ) {
           return {
             id: user._id.toString(),
@@ -39,18 +40,23 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }: { token: any; user?: any }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.avatar = user.avatar; // Include avatar if needed
       }
       return token;
     },
-    async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.role = token.role as string;
+    async session({ session, token }: { session: any; token: any }) {
+      session.user.id = token.id;
+      session.user.role = token.role;
+      session.user.avatar = token.avatar; // Include avatar if needed
       return session;
     },
+  },
+  session: {
+    strategy: "jwt", // Use JWT for session management
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

@@ -1,29 +1,41 @@
-import { Schema, model, models, Document } from "mongoose";
+import { Schema, model, models, Document, Types } from "mongoose";
 
-// TypeScript Interface for the Post
-interface IPost extends Document {
-  title: string;
-  description: string;
-  imageUrl?: string;
-  authorId: Schema.Types.ObjectId;
-  likes?: number;
-  comments?: number;
+interface IComment {
+  userId: Types.ObjectId;
+  text: string;
+  createdAt: Date;
 }
 
-// Post Schema
+interface IPost extends Document {
+  authorId: Types.ObjectId;
+  description: string;
+  imageUrl?: string;
+  likes: Types.ObjectId[];
+  comments: IComment[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const CommentSchema = new Schema<IComment>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    text: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
 const PostSchema = new Schema<IPost>(
   {
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    imageUrl: { type: String, default: "" }, // Optional image URL
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    likes: { type: Number, default: 0 },
-    comments: { type: Number, default: 0 },
+    description: { type: String, required: true },
+    imageUrl: { type: String },
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }], // Array of users who liked the post
+    comments: [CommentSchema], // Array of comments (userId, text, createdAt)
   },
   { timestamps: true }
 );
 
-// Prevent duplicate model creation in Next.js
 const Post = models.Post || model<IPost>("Post", PostSchema);
 
 export default Post;
