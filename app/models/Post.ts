@@ -27,7 +27,7 @@ const CommentSchema = new Schema<IComment>(
 
 const PostSchema = new Schema<IPost>(
   {
-    authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    authorId: { type: Schema.Types.ObjectId, ref: "User", required: false },
     description: { type: String, required: true },
     imageUrl: { type: String },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }], // Array of users who liked the post

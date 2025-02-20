@@ -1,12 +1,11 @@
-//import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/app/models/User";
 import { connectDB } from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -40,28 +39,29 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: { token: any; user?: any }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.avatar = user.avatar; // Include avatar if needed
+        token.avatar = user.avatar;
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      session.user.id = token.id;
-      session.user.role = token.role;
-      session.user.avatar = token.avatar; // Include avatar if needed
+    async session({ session, token }) {
+      session.user.id = token.id as string;
+      session.user.role = token.role as string;
+      session.user.avatar = token.avatar as string;
       return session;
     },
   },
   session: {
-    strategy: "jwt", // Use JWT for session management
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
   },
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

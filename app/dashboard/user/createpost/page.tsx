@@ -4,9 +4,11 @@ import { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import useAuthStore from "@/app/store/authStore";
+import usePostStore from "@/app/store/postStore";
 
 const CreatePost = () => {
   const { user } = useAuthStore();
+  const { addPost } = usePostStore();
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -21,7 +23,39 @@ const CreatePost = () => {
     }
   };
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    if (!description) return alert("Description is required");
+
+    try {
+      setLoading(true);
+
+      let imageUrl = "";
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const { data } = await axios.post("/api/posts/upload", formData);
+        imageUrl = data.imageUrl;
+      }
+
+      const { data: newPost } = await axios.post("/api/posts/create", {
+        description,
+        imageUrl,
+      });
+
+      addPost(newPost);
+      setDescription("");
+      setImageFile(null);
+      setImagePreview(null);
+      alert("Post created successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create post");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex justify-center items-center ">
