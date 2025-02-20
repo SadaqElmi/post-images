@@ -27,11 +27,11 @@ const CommentSchema = new Schema<IComment>(
 
 const PostSchema = new Schema<IPost>(
   {
-    authorId: { type: Schema.Types.ObjectId, ref: "User", required: false },
+    authorId: { type: Schema.Types.ObjectId, ref: "User" },
     description: { type: String, required: true },
-    imageUrl: { type: String },
-    likes: [{ type: Schema.Types.ObjectId, ref: "User" }], // Array of users who liked the post
-    comments: [CommentSchema], // Array of comments (userId, text, createdAt)
+    imageUrl: { type: String, default: null },
+    likes: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+    comments: { type: [CommentSchema], default: [] },
   },
   { timestamps: true }
 );

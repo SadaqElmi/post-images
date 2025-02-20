@@ -4,20 +4,6 @@ import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
-export async function GET() {
-  try {
-    await connectDB();
-    const posts = await Post.find().sort({ createdAt: -1 });
-    return NextResponse.json(posts);
-  } catch (error) {
-    console.error("Failed to fetch posts", error);
-    return NextResponse.json(
-      { error: "Failed to fetch posts" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function POST(req: NextRequest) {
   try {
     await connectDB();

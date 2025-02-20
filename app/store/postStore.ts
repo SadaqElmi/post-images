@@ -1,12 +1,24 @@
 import { create } from "zustand";
 
-interface Post {
+export interface User {
   _id: string;
-  authorId: string;
+  name: string;
+  avatar: string;
+}
+
+export interface Comment {
+  userId: string | User;
+  text: string;
+  createdAt: string;
+}
+
+export interface Post {
+  _id: string;
+  authorId: string | User;
   description: string;
   imageUrl?: string;
   likes: string[];
-  comments: { userId: string; text: string; createdAt: string }[];
+  comments: Comment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -20,7 +32,7 @@ interface PostState {
 const usePostStore = create<PostState>((set) => ({
   posts: [],
   addPost: (post) => set((state) => ({ posts: [post, ...state.posts] })),
-  setPosts: (posts) => set({ posts }),
+  setPosts: (posts) => set({ posts: posts ?? [] }),
 }));
 
 export default usePostStore;

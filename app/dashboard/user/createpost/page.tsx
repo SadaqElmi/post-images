@@ -5,6 +5,7 @@ import axios from "axios";
 import Image from "next/image";
 import useAuthStore from "@/app/store/authStore";
 import usePostStore from "@/app/store/postStore";
+import { toast } from "react-hot-toast";
 
 const CreatePost = () => {
   const { user } = useAuthStore();
@@ -24,12 +25,16 @@ const CreatePost = () => {
   };
 
   const handleSubmit = async () => {
-    if (!description) return alert("Description is required");
+    if (!description.trim()) {
+      toast.error("Description is required");
+      alert("Description is required");
+      return;
+    }
 
     try {
       setLoading(true);
 
-      let imageUrl = "";
+      let imageUrl: string | null = null;
 
       if (imageFile) {
         const formData = new FormData();
@@ -48,9 +53,11 @@ const CreatePost = () => {
       setDescription("");
       setImageFile(null);
       setImagePreview(null);
+      toast.success("Post Created successfully!");
       alert("Post created successfully!");
     } catch (error) {
       console.error(error);
+      toast.error("Failed To Create Post!");
       alert("Failed to create post");
     } finally {
       setLoading(false);
