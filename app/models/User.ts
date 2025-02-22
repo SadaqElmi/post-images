@@ -13,8 +13,8 @@ const UserSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, unique: true, required: true },
-    password: { type: String },
-    avatar: { type: String },
+    password: { type: String, default: "" },
+    avatar: { type: String, default: "" },
     role: { type: String, enum: ["user", "admin"], default: "user" },
   },
   { timestamps: true }
