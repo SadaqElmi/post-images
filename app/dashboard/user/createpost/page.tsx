@@ -27,7 +27,6 @@ const CreatePost = () => {
   const handleSubmit = async () => {
     if (!description.trim()) {
       toast.error("Description is required");
-      alert("Description is required");
       return;
     }
 
@@ -54,11 +53,9 @@ const CreatePost = () => {
       setImageFile(null);
       setImagePreview(null);
       toast.success("Post Created successfully!");
-      alert("Post created successfully!");
     } catch (error) {
       console.error(error);
       toast.error("Failed To Create Post!");
-      alert("Failed to create post");
     } finally {
       setLoading(false);
     }

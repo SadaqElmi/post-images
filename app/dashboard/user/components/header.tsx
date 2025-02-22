@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import axios from "axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -11,32 +14,53 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import useAuthStore from "@/app/store/authStore";
-import { useState } from "react";
-import axios from "axios";
 
 const Header = () => {
-  const { user, clearUser, setUser } = useAuthStore();
-  const [image, setImage] = useState<string | null>(user?.avatar || null);
-  const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
+  const { user, setUser, clearUser } = useAuthStore();
+  // State for the currently displayed avatar image
+  const [image, setImage] = useState<string>(user?.avatar || "");
+  // State for the selected file that is pending confirmation
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Update the user and avatar when the session changes
+  useEffect(() => {
+    if (session && session.user) {
+      setUser(session.user);
+      setImage(session.user.avatar || "");
+    }
+  }, [session, setUser]);
 
+  // When a file is selected, create a local preview and save the file reference
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const localImageUrl = URL.createObjectURL(file);
+      setImage(localImageUrl);
+      setSelectedFile(file);
+      event.target.value = "";
+    }
+  };
+
+  // When the user clicks "Save", upload the selected image
+  const handleSaveImage = async () => {
+    if (!selectedFile) return;
     const formData = new FormData();
-    formData.append("file", file);
-
-    console.log("Uploading image...");
-    setLoading(true);
-    console.log(formData);
-
+    formData.append("file", selectedFile);
     try {
-      const res = await axios.post("/api/users/upload", formData);
-      setImage(res.data.imageUrl);
+      const response = await axios.post("/api/users/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const uploadedImageUrl = response.data.imageUrl;
+      setImage(uploadedImageUrl);
+      if (user) {
+        setUser({ ...user, avatar: uploadedImageUrl });
+      }
+      // Clear the selected file after a successful upload
+      setSelectedFile(null);
     } catch (error) {
-      console.error("Upload failed", error);
+      console.error("Failed to upload image", error);
     }
   };
 
@@ -60,8 +84,8 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Avatar>
               <AvatarImage
-                src={image || user?.avatar}
-                alt={user?.name || "Profile"}
+                src={image || "/default-avatar.png"}
+                alt="Profile"
                 className="object-cover"
               />
               <AvatarFallback>
@@ -74,9 +98,30 @@ const Header = () => {
             <DropdownMenuLabel>User: {user?.name}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <input type="file" onChange={handleImageChange} />
+              {/* File input with event propagation stopped so the dropdown doesn't close */}
+              <DropdownMenuItem asChild>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <input
+                    accept="image/*"
+                    type="file"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={handleImageChange}
+                  />
+                </div>
               </DropdownMenuItem>
+              {/* Show Save button only when a file has been selected */}
+              {selectedFile && (
+                <DropdownMenuItem asChild>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={handleSaveImage}
+                      className="text-white  bg-blue-500 p-1 rounded-md w-full"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
