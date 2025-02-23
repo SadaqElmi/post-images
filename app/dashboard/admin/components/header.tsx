@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import axios from "axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -9,13 +12,67 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import React, { useState } from "react";
+import useAuthStore from "@/app/store/authStore";
 
 const Header = () => {
-  const [userName, setUserName] = useState("");
+  const { data: session } = useSession();
+  const { user, setUser, clearUser } = useAuthStore();
+  // State for the currently displayed avatar image
+  const [image, setImage] = useState<string>(user?.avatar || "");
+  // State for the selected file that is pending confirmation
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Update the user and avatar when the session changes
+  useEffect(() => {
+    if (session && session.user) {
+      setUser(session.user);
+      setImage(session.user.avatar || "");
+    }
+  }, [session, setUser]);
+
+  // When a file is selected, create a local preview and save the file reference
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const localImageUrl = URL.createObjectURL(file);
+      setImage(localImageUrl);
+      setSelectedFile(file);
+      event.target.value = "";
+    }
+  };
+
+  // When the user clicks "Save", upload the selected image
+  const handleSaveImage = async () => {
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    try {
+      const response = await axios.post("/api/users/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const uploadedImageUrl = response.data.imageUrl;
+      setImage(uploadedImageUrl);
+      if (user) {
+        setUser({ ...user, avatar: uploadedImageUrl });
+      }
+      // Clear the selected file after a successful upload
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Failed to upload image", error);
+    }
+  };
+
+  // When the user clicks "Cancel", revert the preview and clear the selected file
+  const handleCancelImage = () => {
+    setImage(user?.avatar || "");
+    setSelectedFile(null);
+  };
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/" });
+    clearUser();
+  };
   return (
     <>
       <div className="flex justify-around items-center px-25 py-4">
@@ -28,30 +85,65 @@ const Header = () => {
           </Link>
         </div>
         <div className="flex items-center gap-4">
-          {!userName ? <span></span> : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar>
                 <AvatarImage
-                  src={"https://github.com/shadcn.png"}
+                  src={image || ""}
                   alt="Profile"
                   className="object-cover"
                 />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>
+                  {user?.name?.charAt(0).toUpperCase() || "U"}
+                </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Change The Profile</DropdownMenuLabel>
+              <DropdownMenuLabel>User: {user?.name}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <input type="file" />
+                {/* File input with event propagation stopped so the dropdown doesn't close */}
+                <DropdownMenuItem asChild>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <input
+                      accept="image/*"
+                      type="file"
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleImageChange}
+                    />
+                  </div>
                 </DropdownMenuItem>
+                {/* Show Save and Cancel buttons only when a file has been selected */}
+                {selectedFile && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={handleSaveImage}
+                          className="text-white bg-blue-500 p-1 rounded-md w-full"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={handleCancelImage}
+                          className="text-white bg-red-500 p-1 rounded-md w-full"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button>LogOut</Button>
+
+          <Button onClick={handleLogout}>LogOut</Button>
         </div>
       </div>
     </>
