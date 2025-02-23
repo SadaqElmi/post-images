@@ -38,22 +38,6 @@ const Posts = () => {
   );
 
   const handleEditComment = async (postId: string, commentId: string) => {
-    if (!commentId || !editingComment[commentId]?.trim()) {
-      console.error("Missing commentId or empty text", {
-        postId,
-        commentId,
-        text: editingComment[commentId],
-      });
-      alert("Comment ID is missing or text is empty.");
-      return;
-    }
-
-    console.log("Sending request to edit:", {
-      postId,
-      commentId,
-      newText: editingComment[commentId],
-    });
-
     try {
       const { data } = await axios.put("/api/posts/comment", {
         postId,
@@ -79,13 +63,11 @@ const Posts = () => {
       setEditingComment({});
       setCommentBeingEdited(null);
     } catch (error) {
-      console.error("Failed to edit comment", error);
-      alert("Failed to edit comment");
+      throw new Error("Failed to edit comment");
     }
   };
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
-    console.log("Deleting comment with ID:", commentId); // Debugging
     if (!window.confirm("Are you sure you want to delete this comment?"))
       return;
 
@@ -108,8 +90,7 @@ const Posts = () => {
 
       setPosts(updatedPosts);
     } catch (error) {
-      console.error("Failed to delete comment", error);
-      alert("Failed to delete comment");
+      throw new Error("Failed to delete comment");
     }
   };
 
@@ -119,7 +100,6 @@ const Posts = () => {
         const res = await axios.get("/api/posts");
         setPosts(res.data);
       } catch (error) {
-        console.error("Failed to fetch posts", error);
         setPosts([]);
       }
     };
@@ -139,9 +119,6 @@ const Posts = () => {
         p._id === updatedPost._id ? updatedPost : p
       );
       setPosts(updatedPosts);
-    } catch (error) {
-      console.error("Failed to like post", error);
-      alert("Failed to like post");
     } finally {
       setLikingPostId(null);
     }
@@ -186,26 +163,11 @@ const Posts = () => {
       const { data } = await axios.post("/api/posts/comment", { postId, text });
 
       // Replace temp ID with actual ID from backend response
-      const updatedPosts = posts.map((p) =>
-        p._id === postId
-          ? {
-              ...p,
-              comments: p.comments.map((c) =>
-                c._id === tempId
-                  ? {
-                      ...c,
-                      _id: data.comments[data.comments.length - 1]._id, // Use actual ID from backend
-                    }
-                  : c
-              ),
-            }
-          : p
-      ) as Post[];
+      const updatedPosts = posts.map((post) =>
+        post._id === postId ? data : post
+      );
       setPosts(updatedPosts);
     } catch (error) {
-      console.error("Failed to add comment", error);
-      alert("Failed to add comment");
-
       // Revert optimistic update on error
       const revertedPosts = posts.map((p) =>
         p._id === postId
@@ -347,7 +309,6 @@ const Posts = () => {
               </div>
 
               {displayedComments.map((comment) => {
-                console.log("Comment ID:", comment._id); // Debugging
                 const commentUser =
                   typeof comment.userId === "object"
                     ? comment.userId
@@ -415,20 +376,6 @@ const Posts = () => {
                               <>
                                 <button
                                   onClick={() => {
-                                    console.log(
-                                      "Editing comment ID:",
-                                      comment._id
-                                    ); // Debugging
-                                    if (!comment._id) {
-                                      console.error(
-                                        "Comment ID is missing!",
-                                        comment
-                                      );
-                                      alert(
-                                        "Something went wrong! Comment ID is missing."
-                                      );
-                                      return;
-                                    }
                                     setCommentBeingEdited(comment._id);
                                     setEditingComment({
                                       [comment._id]: comment.text,

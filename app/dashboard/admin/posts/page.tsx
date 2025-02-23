@@ -187,21 +187,9 @@ const Posts = () => {
       const { data } = await axios.post("/api/posts/comment", { postId, text });
 
       // Replace temp ID with actual ID from backend response
-      const updatedPosts = posts.map((p) =>
-        p._id === postId
-          ? {
-              ...p,
-              comments: p.comments.map((c) =>
-                c._id === tempId
-                  ? {
-                      ...c,
-                      _id: data.comments[data.comments.length - 1]._id, // Use actual ID from backend
-                    }
-                  : c
-              ),
-            }
-          : p
-      ) as Post[];
+      const updatedPosts = posts.map((post) =>
+        post._id === postId ? data : post
+      );
       setPosts(updatedPosts);
     } catch (error) {
       console.error("Failed to add comment", error);

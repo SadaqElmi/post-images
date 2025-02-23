@@ -12,8 +12,6 @@ export async function GET(req: NextRequest) {
       .lean()
       .sort({ createdAt: -1 });
 
-    console.log("Fetched Posts:", posts); // Debugging
-
     return NextResponse.json(posts);
   } catch (error) {
     console.error("Error fetching posts:", error);
