@@ -129,29 +129,31 @@ const Header = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-48 sm:w-56">
-            <DropdownMenuLabel>Admin: {user?.name}</DropdownMenuLabel>
+            <DropdownMenuLabel>User: {user?.name}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <div className="w-full" onClick={(e) => e.stopPropagation()}>
-                  <label className="cursor-pointer w-full">
-                    Change Avatar
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <input
+                    accept="image/*"
+                    type="file"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={handleImageChange}
+                  />
                 </div>
               </DropdownMenuItem>
+              {/* Show Save button only when a file has been selected */}
               {selectedFile && (
                 <>
-                  <DropdownMenuItem
-                    onClick={handleSaveImage}
-                    className="cursor-pointer"
-                  >
-                    <span className="text-green-600 w-full">Save</span>
+                  <DropdownMenuItem asChild>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={handleSaveImage}
+                        className="text-white  bg-blue-500 p-1 rounded-md w-full"
+                      >
+                        Save
+                      </button>
+                    </div>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleCancelImage}
