@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { postId, text } = await req.json();
-
     if (!postId || !text.trim()) {
       return NextResponse.json(
         { error: "Post ID and text are required" },
@@ -22,31 +21,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1) Fetch and populate
-    const post = await Post.findById(postId)
-      .populate("authorId", "name avatar")
-      .populate("comments.userId", "name avatar");
-
+    // 1) Fetch the post
+    const post = await Post.findById(postId);
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    // 2) Add the new comment
+    // 2) Add comment
     post.comments.push({
       userId: session.user.id,
       text,
       createdAt: new Date(),
     });
 
-    // 3) Save
     await post.save();
 
-    // 4) Re-fetch the updated post to ensure the new comment is populated
+    // 3) Re-fetch the updated post WITH POPULATED comments
     const updatedPost = await Post.findById(postId)
       .populate("authorId", "name avatar")
-      .populate("comments.userId", "name avatar");
+      .populate("comments.userId", "name avatar"); // Ensure user data is fetched
 
-    // 5) Return fully populated post
     return NextResponse.json(updatedPost);
   } catch (error) {
     console.error(error);

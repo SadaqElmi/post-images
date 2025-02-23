@@ -236,7 +236,10 @@ const Posts = () => {
               {/* Display Comments */}
               {displayedComments.map((comment) => {
                 const commentUser =
-                  typeof comment.userId === "object" ? comment.userId : null;
+                  typeof comment.userId === "object"
+                    ? comment.userId
+                    : { name: "Unknown", avatar: "" };
+
                 return (
                   <div
                     key={comment.createdAt}
