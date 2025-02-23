@@ -64,6 +64,12 @@ const Header = () => {
     }
   };
 
+  // When the user clicks "Cancel", revert the preview and clear the selected file
+  const handleCancelImage = () => {
+    setImage(user?.avatar || "");
+    setSelectedFile(null);
+  };
+
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
     clearUser();
@@ -84,7 +90,7 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Avatar>
               <AvatarImage
-                src={image || "/default-avatar.png"}
+                src={image || ""}
                 alt="Profile"
                 className="object-cover"
               />
@@ -109,18 +115,30 @@ const Header = () => {
                   />
                 </div>
               </DropdownMenuItem>
-              {/* Show Save button only when a file has been selected */}
+              {/* Show Save and Cancel buttons only when a file has been selected */}
               {selectedFile && (
-                <DropdownMenuItem asChild>
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <button
-                      onClick={handleSaveImage}
-                      className="text-white  bg-blue-500 p-1 rounded-md w-full"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem asChild>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={handleSaveImage}
+                        className="text-white bg-blue-500 p-1 rounded-md w-full"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={handleCancelImage}
+                        className="text-white bg-red-500 p-1 rounded-md w-full"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </DropdownMenuItem>
+                </>
               )}
             </DropdownMenuGroup>
           </DropdownMenuContent>

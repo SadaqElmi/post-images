@@ -7,7 +7,7 @@ export async function GET() {
     await connectDB();
 
     const posts = await Post.find()
-      .populate("authorId", "name avatar") // 🟢 This will replace ID with User Object containing name & avatar
+      .populate("authorId", "name avatar") // 🟢 Populate authorId with name and avatar
       .sort({ createdAt: -1 });
 
     return NextResponse.json(posts);

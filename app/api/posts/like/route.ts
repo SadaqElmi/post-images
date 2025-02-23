@@ -22,13 +22,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1) Find the post
     const post = await Post.findById(postId);
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    // 2) Toggle like
     const userId = session.user.id;
-
     const isLiked = post.likes.includes(userId);
     if (isLiked) {
       post.likes = post.likes.filter((id: string) => id.toString() !== userId);
@@ -36,9 +37,15 @@ export async function POST(req: NextRequest) {
       post.likes.push(userId);
     }
 
+    // 3) Save the post
     await post.save();
 
-    return NextResponse.json(post);
+    // 4) Re-fetch and populate after saving
+    const updatedPost = await Post.findById(postId)
+      .populate("authorId", "name avatar")
+      .populate("comments.userId", "name avatar");
+
+    return NextResponse.json(updatedPost);
   } catch (error) {
     console.error(error);
     return NextResponse.json(

@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    //const post = await Post.findById(postId);
+    // 1) Fetch and populate
     const post = await Post.findById(postId)
       .populate("authorId", "name avatar")
       .populate("comments.userId", "name avatar");
@@ -31,15 +31,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    // 2) Add the new comment
     post.comments.push({
       userId: session.user.id,
       text,
       createdAt: new Date(),
     });
 
+    // 3) Save
     await post.save();
 
-    return NextResponse.json(post);
+    // 4) Re-fetch the updated post to ensure the new comment is populated
+    const updatedPost = await Post.findById(postId)
+      .populate("authorId", "name avatar")
+      .populate("comments.userId", "name avatar");
+
+    // 5) Return fully populated post
+    return NextResponse.json(updatedPost);
   } catch (error) {
     console.error(error);
     return NextResponse.json(

@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -27,15 +27,26 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Attempt to sign in using credentials with redirect disabled
     const result = await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
+
     if (result?.error) {
       toast.error(result.error);
+      setLoading(false);
+      return;
+    }
+
+    // Get the updated session which includes the role from our JWT callback
+    const session = await getSession();
+
+    // Check the user's role and redirect accordingly
+    if (session?.user.role === "admin") {
+      router.push("/dashboard/admin");
     } else {
-      toast.success("Login successful!");
       router.push("/dashboard/user");
     }
 
@@ -43,8 +54,10 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
+    // Google provider will handle redirection automatically using the callbackUrl
     await signIn("google", { callbackUrl: "/dashboard/user" });
   };
+
   return (
     <div className="flex justify-center items-center mt-20">
       <Card className="w-[350px]">
@@ -55,7 +68,7 @@ const Login = () => {
           </CardDescription>
           <Button
             variant="outline"
-            className="w-full mt-10 "
+            className="w-full mt-10"
             onClick={handleGoogleLogin}
           >
             <svg
@@ -114,10 +127,10 @@ const Login = () => {
                 {loading ? "Logging in..." : "Login"}
               </Button>
               <p>
-                Don't Have Account ?
+                Don't Have an Account?{" "}
                 <Link href="/create" className="text-red-500">
                   Sign up
-                </Link>{" "}
+                </Link>
               </p>
             </CardFooter>
           </form>
