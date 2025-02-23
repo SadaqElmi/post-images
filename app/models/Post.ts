@@ -1,6 +1,7 @@
 import { Schema, model, models, Document, Types } from "mongoose";
 
 interface IComment {
+  _id?: Types.ObjectId;
   userId: Types.ObjectId;
   text: string;
   createdAt: Date;
@@ -18,11 +19,12 @@ interface IPost extends Document {
 
 const CommentSchema = new Schema<IComment>(
   {
+    _id: { type: Schema.Types.ObjectId, auto: true }, // Ensure this is included
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     text: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
   },
-  { _id: false }
+  { _id: true } // Ensure this is set to true
 );
 
 const PostSchema = new Schema<IPost>(

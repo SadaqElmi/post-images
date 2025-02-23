@@ -30,6 +30,89 @@ const Posts = () => {
   // Create a ref object to hold references to each comment input
   const commentInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
+  const [editingComment, setEditingComment] = useState<Record<string, string>>(
+    {}
+  );
+  const [commentBeingEdited, setCommentBeingEdited] = useState<string | null>(
+    null
+  );
+
+  const handleEditComment = async (postId: string, commentId: string) => {
+    if (!commentId || !editingComment[commentId]?.trim()) {
+      console.error("Missing commentId or empty text", {
+        postId,
+        commentId,
+        text: editingComment[commentId],
+      });
+      alert("Comment ID is missing or text is empty.");
+      return;
+    }
+
+    console.log("Sending request to edit:", {
+      postId,
+      commentId,
+      newText: editingComment[commentId],
+    });
+
+    try {
+      const { data } = await axios.put("/api/posts/comment", {
+        postId,
+        commentId,
+        newText: editingComment[commentId],
+      });
+
+      const updatedPosts = posts.map((post) => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            comments: post.comments.map((comment) =>
+              comment._id === commentId
+                ? { ...comment, text: data.updatedComment.text }
+                : comment
+            ),
+          };
+        }
+        return post;
+      });
+
+      setPosts(updatedPosts);
+      setEditingComment({});
+      setCommentBeingEdited(null);
+    } catch (error) {
+      console.error("Failed to edit comment", error);
+      alert("Failed to edit comment");
+    }
+  };
+
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    console.log("Deleting comment with ID:", commentId); // Debugging
+    if (!window.confirm("Are you sure you want to delete this comment?"))
+      return;
+
+    try {
+      await axios.delete("/api/posts/comment", {
+        data: { postId, commentId },
+      });
+
+      const updatedPosts = posts.map((post) => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            comments: post.comments.filter(
+              (comment) => comment._id !== commentId
+            ),
+          };
+        }
+        return post;
+      });
+
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Failed to delete comment", error);
+      alert("Failed to delete comment");
+    }
+  };
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -43,50 +126,6 @@ const Posts = () => {
 
     fetchPosts();
   }, [setPosts]);
-
-  const handleCommentSubmit = async (postId: string) => {
-    const text = commentTexts[postId]?.trim();
-    if (!text) {
-      alert("Comment cannot be empty");
-      return;
-    }
-    if (!session?.user) {
-      alert("You need to log in");
-      return;
-    }
-
-    // Create a new comment object for optimistic update
-    const newComment: Comment = {
-      userId: {
-        _id: session.user.id,
-        name: session.user.name,
-        avatar: session.user.avatar,
-      },
-      text,
-      createdAt: new Date().toISOString(),
-    };
-
-    try {
-      setCommentLoading(postId);
-
-      // Optimistically update local state
-      const updatedPosts: Post[] = posts.map((p) =>
-        p._id === postId ? { ...p, comments: [...p.comments, newComment] } : p
-      );
-      setPosts(updatedPosts);
-
-      // Send the comment to the server
-      await axios.post("/api/posts/comment", { postId, text });
-
-      // Clear the comment input for this post
-      setCommentTexts((prev) => ({ ...prev, [postId]: "" }));
-    } catch (error) {
-      console.error("Failed to add comment", error);
-      alert("Failed to add comment");
-    } finally {
-      setCommentLoading(null);
-    }
-  };
 
   const handleLike = async (postId: string) => {
     setLikingPostId(postId);
@@ -108,6 +147,80 @@ const Posts = () => {
     }
   };
 
+  const handleCommentSubmit = async (postId: string) => {
+    const text = commentTexts[postId]?.trim();
+    if (!text) return;
+    if (!session?.user) {
+      alert("You need to log in");
+      return;
+    }
+
+    setCommentLoading(postId);
+
+    // Generate a temporary ID for optimistic update
+    const tempId = `temp-${Math.random()}`;
+    const newComment: Comment = {
+      _id: tempId, // Temporary ID for UI updates
+      userId: {
+        _id: session.user.id,
+        name: session.user.name,
+        avatar: session.user.avatar,
+      },
+      text,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Optimistically update UI
+    const updatedPosts = posts.map((p: Post) =>
+      p._id === postId
+        ? {
+            ...p,
+            comments: [...p.comments, newComment],
+          }
+        : p
+    );
+    setPosts(updatedPosts);
+
+    try {
+      // Send request to backend
+      const { data } = await axios.post("/api/posts/comment", { postId, text });
+
+      // Replace temp ID with actual ID from backend response
+      const updatedPosts = posts.map((p) =>
+        p._id === postId
+          ? {
+              ...p,
+              comments: p.comments.map((c) =>
+                c._id === tempId
+                  ? {
+                      ...c,
+                      _id: data.comments[data.comments.length - 1]._id, // Use actual ID from backend
+                    }
+                  : c
+              ),
+            }
+          : p
+      ) as Post[];
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Failed to add comment", error);
+      alert("Failed to add comment");
+
+      // Revert optimistic update on error
+      const revertedPosts = posts.map((p) =>
+        p._id === postId
+          ? {
+              ...p,
+              comments: p.comments.filter((c) => c._id == tempId),
+            }
+          : p
+      );
+      setPosts(revertedPosts);
+    } finally {
+      setCommentTexts((prev) => ({ ...prev, [postId]: "" }));
+      setCommentLoading(null);
+    }
+  };
   return (
     <div className="flex flex-col items-center w-full">
       {posts.map((post) => {
@@ -233,16 +346,15 @@ const Posts = () => {
                 </button>
               </div>
 
-              {/* Display Comments */}
               {displayedComments.map((comment) => {
+                console.log("Comment ID:", comment._id); // Debugging
                 const commentUser =
                   typeof comment.userId === "object"
                     ? comment.userId
                     : { name: "Unknown", avatar: "" };
-
                 return (
                   <div
-                    key={comment.createdAt}
+                    key={comment._id}
                     className="flex items-start gap-3 mt-3"
                   >
                     <Avatar>
@@ -255,26 +367,90 @@ const Posts = () => {
                         {commentUser?.name?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <div className="bg-gray-100 p-2 rounded-md">
-                        <p className="font-semibold">
-                          {commentUser?.name || "Unknown User"}
-                        </p>
-                        <p>{comment.text}</p>
-                      </div>
+                    <div className="flex-1">
+                      {commentBeingEdited === comment._id ? (
+                        <input
+                          type="text"
+                          value={editingComment[comment._id] || comment.text}
+                          onChange={(e) =>
+                            setEditingComment({
+                              ...editingComment,
+                              [comment._id]: e.target.value,
+                            })
+                          }
+                          className="border p-1 rounded w-full outline-none"
+                        />
+                      ) : (
+                        <div className="bg-gray-100 p-2 rounded-md">
+                          <p className="font-semibold">
+                            {commentUser?.name || "Unknown User"}
+                          </p>
+                          <p>{comment.text}</p>
+                        </div>
+                      )}
                       <span className="text-gray-500 text-[10px]">
                         {formatRelativeTime(comment.createdAt)}
                       </span>
-                      {commentTexts && (
-                        <div className="flex space-x-2 mt-1">
-                          <button className="text-blue-500 text-xs">
-                            Edit
-                          </button>
-                          <button className="text-red-500 text-xs">
-                            Delete
-                          </button>
-                        </div>
-                      )}
+                      {typeof comment.userId !== "string" &&
+                        session?.user?.id === comment.userId._id && (
+                          <div className="flex space-x-2 mt-1">
+                            {commentBeingEdited === comment._id ? (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    handleEditComment(post._id, comment._id)
+                                  }
+                                  className="text-blue-500 text-xs"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => setCommentBeingEdited(null)}
+                                  className="text-gray-500 text-xs"
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    console.log(
+                                      "Editing comment ID:",
+                                      comment._id
+                                    ); // Debugging
+                                    if (!comment._id) {
+                                      console.error(
+                                        "Comment ID is missing!",
+                                        comment
+                                      );
+                                      alert(
+                                        "Something went wrong! Comment ID is missing."
+                                      );
+                                      return;
+                                    }
+                                    setCommentBeingEdited(comment._id);
+                                    setEditingComment({
+                                      [comment._id]: comment.text,
+                                    });
+                                  }}
+                                  className="text-blue-500 text-xs"
+                                >
+                                  Edit
+                                </button>
+
+                                <button
+                                  onClick={() =>
+                                    handleDeleteComment(post._id, comment._id)
+                                  }
+                                  className="text-red-500 text-xs"
+                                >
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        )}
                     </div>
                   </div>
                 );
