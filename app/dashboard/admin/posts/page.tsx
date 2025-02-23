@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
-import usePostStore, { User, Post, Comment } from "@/app/store/postStore";
+import usePostStore, { Post, Comment } from "@/app/store/postStore";
 import axios from "axios";
 import { formatPostTime } from "@/lib/formatTime";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
