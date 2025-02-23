@@ -184,7 +184,7 @@ const Posts = () => {
     }
   };
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full px-2 sm:px-4">
       {posts.map((post) => {
         // Determine the post's author; if authorId is a string, data is not populated.
         const author = typeof post.authorId === "string" ? null : post.authorId;
@@ -196,7 +196,7 @@ const Posts = () => {
         return (
           <div
             key={post._id}
-            className="w-[500px] bg-white p-4 rounded-lg shadow-md my-4"
+            className="w-[95%] sm:w-[90%] md:w-[500px] bg-white p-4 rounded-lg shadow-md my-4"
           >
             {/* Post Header */}
             <div className="flex items-center gap-3">
@@ -221,11 +221,11 @@ const Posts = () => {
             </div>
 
             {/* Post Description */}
-            <p className="py-4 text-lg">{post.description}</p>
+            <p className="py-4 text-base md:text-lg">{post.description}</p>
 
             {/* Post Image */}
             {post.imageUrl && (
-              <div className="relative w-full h-auto">
+              <div className="relative w-full aspect-video">
                 <Image
                   src={post.imageUrl}
                   alt="Post Image"
@@ -252,7 +252,7 @@ const Posts = () => {
                 <button
                   onClick={() => handleLike(post._id)}
                   disabled={likingPostId === post._id}
-                  className={`flex items-center space-x-1 px-10 py-2 rounded ${
+                  className={`flex items-center space-x-1 px-4 md:px-10 py-2 rounded ${
                     session?.user && post.likes.includes(session.user.id)
                       ? "bg-blue-500 text-white"
                       : "bg-transparent hover:text-blue-500"
@@ -263,7 +263,7 @@ const Posts = () => {
                 </button>
                 <button
                   onClick={() => commentInputRefs.current[post._id]?.focus()}
-                  className="flex items-center space-x-1 hover:text-blue-500"
+                  className="flex items-center space-x-1 hover:text-blue-500 px-2"
                 >
                   <ChatBubbleLeftIcon className="w-5 h-5" />
                   <span>Comment</span>
@@ -273,7 +273,7 @@ const Posts = () => {
 
             {/* Comment Section */}
             <div className="mt-3">
-              <div className="flex gap-2 items-center">
+              <div className="flex flex-col md:flex-row gap-2 items-center">
                 <Avatar>
                   <AvatarImage
                     src={session?.user?.avatar || undefined}
@@ -296,13 +296,13 @@ const Posts = () => {
                       [post._id]: e.target.value,
                     }))
                   }
+                  className="border p-2 rounded w-full outline-none text-sm md:text-base"
                   placeholder="Write a comment..."
-                  className="border p-1 rounded w-full outline-none"
                 />
                 <button
                   onClick={() => handleCommentSubmit(post._id)}
                   disabled={commentLoading === post._id}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
+                  className="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto text-sm md:text-base"
                 >
                   {commentLoading === post._id ? "..." : "Post"}
                 </button>
