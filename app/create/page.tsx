@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -35,11 +34,6 @@ const Register = () => {
     setLoading(true);
     try {
       await axios.post("/api/auth/singup", { name, email, password });
-
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
       toast.success("User registered successfully!");
       router.push("/login");
     } catch (error: any) {
@@ -50,67 +44,95 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-20">
-      <Card className="w-[350px]">
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome</CardTitle>
-          <CardDescription>Create an account to get started!</CardDescription>
+    <div className="flex justify-center items-center min-h-screen p-4">
+      <Card className="w-full max-w-md sm:w-96">
+        <CardHeader className="text-center space-y-2">
+          <CardTitle className="text-lg sm:text-xl">Create Account</CardTitle>
+          <CardDescription className="text-sm sm:text-base">
+            Register to get started!
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <div className="grid gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm sm:text-base">
+                  Full Name
+                </Label>
                 <Input
                   id="name"
                   type="text"
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                   required
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm sm:text-base">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="sadaq@example.com"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                   required
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm sm:text-base">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                   required
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-sm sm:text-base"
+                >
+                  Confirm Password
+                </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                   required
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Registering..." : "Register"}
+              <Button
+                type="submit"
+                className="w-full h-10 sm:h-11 text-sm sm:text-base"
+                disabled={loading}
+              >
+                {loading ? "Creating Account..." : "Register"}
               </Button>
-              <p>
-                Already Have Account ?
-                <Link href="/" className="text-red-500">
-                  Sign up
-                </Link>{" "}
-              </p>
+
+              <div className="text-center text-sm sm:text-base">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="text-red-500 hover:text-red-600 font-medium"
+                >
+                  Login here
+                </Link>
+              </div>
             </div>
           </form>
         </CardContent>

@@ -65,7 +65,71 @@ const About = () => {
               </li>
             </ul>
           </section>
+          {/* User Features */}
+          <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              User Features
+            </h2>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">✔</span>
+                Create and share posts with images
+              </li>
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">✔</span>
+                Comment on posts and engage with others
+              </li>
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">✔</span>
+                Like and interact with content
+              </li>
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">✔</span>
+                Update profile and avatar
+              </li>
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">✔</span>
+                View personalized dashboard
+              </li>
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">✔</span>
+                Secure authentication system
+              </li>
+            </ul>
+          </section>
 
+          {/* Admin Features */}
+          <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Admin Features
+            </h2>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">⚙</span>
+                Manage all user accounts
+              </li>
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">⚙</span>
+                Moderate content and comments
+              </li>
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">⚙</span>
+                Access advanced analytics
+              </li>
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">⚙</span>
+                Manage system configurations
+              </li>
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">⚙</span>
+                View detailed activity logs
+              </li>
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">⚙</span>
+                Special admin dashboard
+              </li>
+            </ul>
+          </section>
           {/* Technology Stack */}
           <section className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">

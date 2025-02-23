@@ -120,8 +120,8 @@ const Header = () => {
       <div className="flex items-center gap-2 sm:gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer">
-              <AvatarImage src={image} alt="Profile" />
+            <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer object-cover">
+              <AvatarImage src={image} alt="Profile" className="object-cover" />
               <AvatarFallback>
                 {user?.name?.charAt(0).toUpperCase() || "A"}
               </AvatarFallback>
