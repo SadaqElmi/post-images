@@ -36,8 +36,12 @@ const Register = () => {
       await axios.post("/api/auth/singup", { name, email, password });
       toast.success("User registered successfully!");
       router.push("/login");
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Registration failed");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.error || "Registration failed");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     } finally {
       setLoading(false);
     }

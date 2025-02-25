@@ -17,6 +17,7 @@ import { Trash2 } from "lucide-react";
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "admin";
 
   // State for comment texts (keyed by post ID)
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
@@ -260,12 +261,14 @@ const Posts = () => {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => handleDeletePost(post._id)}
-                className="text-red-600 hover:text-red-800"
-              >
-                <Trash2 size={20} />
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => handleDeletePost(post._id)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
             </div>
 
             {/* Post Description */}

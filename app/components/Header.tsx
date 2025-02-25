@@ -22,6 +22,7 @@ const Header = () => {
   const { user, setUser, clearUser } = useAuthStore();
   const [image, setImage] = useState<string>(user?.avatar || "");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     if (session && session.user) {
@@ -80,40 +81,76 @@ const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Admin Navigation</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              {isAdmin ? "Admin Navigation" : "Navigation"}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/admin" className="w-full">
-                Admin Panel
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/admin/posts" className="w-full">
-                Manage Posts
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/admin/about" className="w-full">
-                About Us
-              </Link>
-            </DropdownMenuItem>
+            {isAdmin ? (
+              <>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/admin" className="w-full">
+                    Admin Panel
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/posts" className="w-full">
+                    Manage Posts
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/user" className="w-full">
+                    Posts
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/user/createpost" className="w-full">
+                    Create Post
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/user/about" className="w-full">
+                    About Us
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       {/* Desktop Logo */}
-      <Link href="/dashboard/admin" className="hidden md:block">
-        <h1 className="text-lg font-semibold">Admin Panel</h1>
+      <Link
+        href={isAdmin ? "/dashboard/admin" : "/dashboard/user"}
+        className="hidden md:block"
+      >
+        <h1 className="text-lg font-semibold">
+          {isAdmin ? "Admin Panel" : "Posts"}
+        </h1>
       </Link>
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex gap-4">
-        <Link href="/dashboard/admin/posts">
-          <Button variant="ghost">Manage Posts</Button>
-        </Link>
-        <Link href="/dashboard/admin/about">
-          <Button variant="ghost">About Us</Button>
-        </Link>
+        {isAdmin ? (
+          <Link href="/dashboard/posts">
+            <Button variant="ghost">Manage Posts</Button>
+          </Link>
+        ) : (
+          <>
+            <Link href="/dashboard/user/createpost">
+              <Button variant="ghost">Create Post</Button>
+            </Link>
+            <Link
+              href={
+                isAdmin ? "/dashboard/admin/about" : "/dashboard/user/about"
+              }
+            >
+              <Button variant="ghost">About Us</Button>
+            </Link>
+          </>
+        )}
       </div>
 
       {/* User Section */}
@@ -123,7 +160,7 @@ const Header = () => {
             <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer object-cover">
               <AvatarImage src={image} alt="Profile" className="object-cover" />
               <AvatarFallback>
-                {user?.name?.charAt(0).toUpperCase() || "A"}
+                {user?.name?.charAt(0).toUpperCase() || (isAdmin ? "A" : "U")}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -142,14 +179,13 @@ const Header = () => {
                   />
                 </div>
               </DropdownMenuItem>
-              {/* Show Save button only when a file has been selected */}
               {selectedFile && (
                 <>
                   <DropdownMenuItem asChild>
                     <div onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={handleSaveImage}
-                        className="text-white  bg-blue-500 p-1 rounded-md w-full"
+                        className="text-white bg-blue-500 p-1 rounded-md w-full"
                       >
                         Save
                       </button>

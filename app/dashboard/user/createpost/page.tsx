@@ -3,12 +3,10 @@
 import { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import useAuthStore from "@/app/store/authStore";
 import usePostStore from "@/app/store/postStore";
 import { toast } from "react-hot-toast";
 
 const CreatePost = () => {
-  const { user } = useAuthStore();
   const { addPost } = usePostStore();
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);

@@ -1,7 +1,7 @@
 "use client";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
-import Header from "./components/header";
+import Header from "../components/Header";
 
 export default function RootLayout({
   children,

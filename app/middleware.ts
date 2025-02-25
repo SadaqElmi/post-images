@@ -14,6 +14,7 @@ export function middleware(req: NextRequest) {
     jwt.verify(token, SECRET_KEY);
     return NextResponse.next();
   } catch (error) {
+    console.error("Authentication error:", error);
     return NextResponse.json({ error: "Invalid token" }, { status: 403 });
   }
 }

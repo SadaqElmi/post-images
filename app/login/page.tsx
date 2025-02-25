@@ -50,9 +50,9 @@ const Login = () => {
     setLoading(false);
   };
 
-  //const handleGoogleLogin = async () => {
-  //  await signIn("google", { callbackUrl: "/dashboard/user" });
-  //};
+  const handleGoogleLogin = async () => {
+    await signIn("google", { callbackUrl: "/dashboard/user" });
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
@@ -104,7 +104,7 @@ const Login = () => {
                 </Button>
 
                 <div className="text-center text-sm sm:text-base">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link
                     href="/create"
                     className="text-red-500 hover:text-red-600 font-medium"

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import Posts from "./posts/page";
+import Posts from "../posts/page";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/app/store/authStore";
