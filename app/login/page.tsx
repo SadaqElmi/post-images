@@ -50,9 +50,9 @@ const Login = () => {
     setLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    await signIn("google", { callbackUrl: "/dashboard/user" });
-  };
+  //const handleGoogleLogin = async () => {
+  //  await signIn("google", { callbackUrl: "/dashboard/user" });
+  //};
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
