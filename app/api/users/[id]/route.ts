@@ -3,12 +3,12 @@ import User from "@/app/models/User";
 import { connectDB } from "@/lib/mongodb";
 
 export async function DELETE(
-  request: Request,
+  request: Request, // Add Request as the first parameter
   { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
-    const id = params.id; // Remove await here
+    const id = params.id;
     await User.findByIdAndDelete(id);
     return NextResponse.json({ message: "User deleted" });
   } catch (error) {
@@ -27,7 +27,7 @@ export async function PATCH(
   const { role } = await request.json();
   try {
     await connectDB();
-    const id = params.id; // Remove await here
+    const id = params.id;
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { role },
