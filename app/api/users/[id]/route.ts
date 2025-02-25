@@ -1,62 +1,14 @@
-//import { NextResponse } from "next/server";
-//import User from "@/app/models/User";
-//import { connectDB } from "@/lib/mongodb";
-//
-//export async function DELETE(
-//  request: Request, // Add Request as the first parameter
-//  { params }: { params: { id: string } }
-//) {
-//  try {
-//    await connectDB();
-//    const id = params.id;
-//    await User.findByIdAndDelete(id);
-//    return NextResponse.json({ message: "User deleted" });
-//  } catch (error) {
-//    console.error("Failed to delete user", error);
-//    return NextResponse.json(
-//      { error: "Failed to delete user" },
-//      { status: 500 }
-//    );
-//  }
-//}
-//
-//export async function PATCH(
-//  request: Request,
-//  { params }: { params: { id: string } }
-//) {
-//  const { role } = await request.json();
-//  try {
-//    await connectDB();
-//    const id = params.id;
-//    const updatedUser = await User.findByIdAndUpdate(
-//      id,
-//      { role },
-//      { new: true }
-//    );
-//    return NextResponse.json(updatedUser);
-//  } catch (error) {
-//    console.error("Failed to update user role", error);
-//    return NextResponse.json(
-//      { error: "Failed to update user role" },
-//      { status: 500 }
-//    );
-//  }
-//}
-
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import User from "@/app/models/User";
 import { connectDB } from "@/lib/mongodb";
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params; // Await the params promise before using its properties
     await User.findByIdAndDelete(id);
     return NextResponse.json({ message: "User deleted" });
   } catch (error) {
@@ -70,12 +22,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
 export async function PATCH(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { role } = await request.json();
   try {
     await connectDB();
-    const { id } = context.params;
+    const { id } = await params; // Await the params promise before using its properties
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { role },
