@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/app/models/User";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/config/auth";
 import { NextResponse } from "next/server";
 
 cloudinary.config({
