@@ -43,17 +43,20 @@
 //  }
 //}
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import User from "@/app/models/User";
 import { connectDB } from "@/lib/mongodb";
 
-export async function DELETE(
-  request: Request,
-  context: { params: { id: string } }
-) {
+interface RouteParams {
+  params: {
+    id: string;
+  };
+}
+
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     await connectDB();
-    const { id } = context.params;
+    const { id } = params;
     await User.findByIdAndDelete(id);
     return NextResponse.json({ message: "User deleted" });
   } catch (error) {
