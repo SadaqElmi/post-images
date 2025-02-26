@@ -35,9 +35,6 @@ const Posts = () => {
   const [editingComment, setEditingComment] = useState<Record<string, string>>(
     {}
   );
-  const [commentBeingEdited, setCommentBeingEdited] = useState<string | null>(
-    null
-  );
 
   const handleEditComment = async (postId: string, commentId: string) => {
     if (!commentId || !editingComment[commentId]?.trim()) {
@@ -79,7 +76,6 @@ const Posts = () => {
 
       setPosts(updatedPosts);
       setEditingComment({});
-      setCommentBeingEdited(null);
     } catch (error) {
       console.error("Failed to edit comment", error);
       alert("Failed to edit comment");
