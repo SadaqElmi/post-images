@@ -225,11 +225,9 @@ const Posts = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full px-2 sm:px-4">
       {posts.map((post) => {
-        // Determine the post's author; if authorId is a string, data is not populated.
         const author = typeof post.authorId === "string" ? null : post.authorId;
-        // Determine which comments to display: if expanded, show all; otherwise, only first 2.
         const displayedComments = expandedComments[post._id]
           ? post.comments
           : post.comments.slice(0, 2);
@@ -237,10 +235,10 @@ const Posts = () => {
         return (
           <div
             key={post._id}
-            className="w-[500px] bg-white p-4 rounded-lg shadow-md my-4 mb-10"
+            className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto"
           >
             {/* Post Header */}
-            <div className="flex items-center gap-3 justify-between">
+            <div className="flex items-center gap-2 sm:gap-3 justify-between">
               <div className="flex items-center gap-3">
                 <Avatar>
                   <AvatarImage
@@ -272,38 +270,38 @@ const Posts = () => {
             </div>
 
             {/* Post Description */}
-            <p className="py-4 text-lg">{post.description}</p>
+            <p className="py-3 sm:py-4 text-base sm:text-lg">
+              {post.description}
+            </p>
 
             {/* Post Image */}
             {post.imageUrl && (
-              <div className="relative w-full h-auto">
+              <div className="relative w-full">
                 <Image
                   src={post.imageUrl}
                   alt="Post Image"
-                  width={500}
-                  height={400}
-                  className="object-cover rounded-lg w-full h-auto"
+                  height={1536}
+                  width={2048}
+                  className="rounded-lg w-full h-auto object-cover"
                   priority
                 />
               </div>
             )}
 
-            {/* Reaction/Like Count Section */}
-            <div className="mt-4 border-t border-gray-200 pt-2">
-              <div className="flex items-center justify-between text-gray-600 text-sm px-2">
-                <div className="flex items-center space-x-1">
+            {/* Reaction/Like Section (Ensure Always Visible) */}
+            <div className="mt-3 sm:mt-4 border-t border-gray-200 pt-2">
+              <div className="flex items-center justify-between text-gray-600 text-xs sm:text-sm px-2">
+                <div className="flex items-center gap-1">
                   <HandThumbUpIcon className="w-4 h-4 text-blue-500" />
-                  <span className="ml-1">{post.likes.length}</span>
+                  <span>{post.likes.length}</span>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <span>{post.comments.length} Comments</span>
-                </div>
+                <span>{post.comments.length} Comments</span>
               </div>
-              <div className="flex justify-around border-t border-gray-200 mt-2 pt-2 text-gray-600 text-sm">
+              <div className="flex justify-around border-t border-gray-200 mt-2 pt-2">
                 <button
                   onClick={() => handleLike(post._id)}
                   disabled={likingPostId === post._id}
-                  className={`flex items-center space-x-1 px-10 py-2 rounded ${
+                  className={`flex items-center gap-1 px-4 py-2 rounded ${
                     session?.user && post.likes.includes(session.user.id)
                       ? "bg-blue-500 text-white"
                       : "bg-transparent hover:text-blue-500"
@@ -314,7 +312,7 @@ const Posts = () => {
                 </button>
                 <button
                   onClick={() => commentInputRefs.current[post._id]?.focus()}
-                  className="flex items-center space-x-1 hover:text-blue-500"
+                  className="flex items-center gap-1 px-4 py-2 hover:text-blue-500"
                 >
                   <ChatBubbleLeftIcon className="w-5 h-5" />
                   <span>Comment</span>
@@ -323,9 +321,9 @@ const Posts = () => {
             </div>
 
             {/* Comment Section */}
-            <div className="mt-3">
+            <div className="mt-2 sm:mt-3">
               <div className="flex gap-2 items-center">
-                <Avatar>
+                <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                   <AvatarImage
                     src={session?.user?.avatar || undefined}
                     alt="Profile"
@@ -347,8 +345,8 @@ const Posts = () => {
                       [post._id]: e.target.value,
                     }))
                   }
+                  className="border p-2 rounded w-full outline-none text-sm sm:text-base"
                   placeholder="Write a comment..."
-                  className="border p-1 rounded w-full outline-none"
                 />
                 <button
                   onClick={() => handleCommentSubmit(post._id)}
@@ -360,7 +358,6 @@ const Posts = () => {
               </div>
 
               {displayedComments.map((comment) => {
-                console.log("Comment ID:", comment._id); // Debugging
                 const commentUser =
                   typeof comment.userId === "object"
                     ? comment.userId
@@ -368,9 +365,9 @@ const Posts = () => {
                 return (
                   <div
                     key={comment._id}
-                    className="flex items-start gap-3 mt-3"
+                    className="flex items-start gap-2 sm:gap-3 mt-2 sm:mt-3"
                   >
-                    <Avatar>
+                    <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
                       <AvatarImage
                         src={commentUser?.avatar || undefined}
                         alt="Profile"
@@ -381,87 +378,34 @@ const Posts = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      {commentBeingEdited === comment._id ? (
-                        <input
-                          type="text"
-                          value={editingComment[comment._id] || comment.text}
-                          onChange={(e) =>
-                            setEditingComment({
-                              ...editingComment,
-                              [comment._id]: e.target.value,
-                            })
-                          }
-                          className="border p-1 rounded w-full outline-none"
-                        />
-                      ) : (
-                        <div className="bg-gray-100 p-2 rounded-md">
-                          <p className="font-semibold">
-                            {commentUser?.name || "Unknown User"}
-                          </p>
-                          <p>{comment.text}</p>
-                        </div>
-                      )}
+                      <div className="bg-gray-100 p-2 rounded-md text-sm sm:text-base">
+                        <p className="font-semibold">
+                          {commentUser?.name || "Unknown User"}
+                        </p>
+                        <p>{comment.text}</p>
+                      </div>
                       <span className="text-gray-500 text-[10px]">
                         {formatRelativeTime(comment.createdAt)}
                       </span>
                       {typeof comment.userId !== "string" &&
                         session?.user?.id === comment.userId._id && (
                           <div className="flex space-x-2 mt-1">
-                            {commentBeingEdited === comment._id ? (
-                              <>
-                                <button
-                                  onClick={() =>
-                                    handleEditComment(post._id, comment._id)
-                                  }
-                                  className="text-blue-500 text-xs"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  onClick={() => setCommentBeingEdited(null)}
-                                  className="text-gray-500 text-xs"
-                                >
-                                  Cancel
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={() => {
-                                    console.log(
-                                      "Editing comment ID:",
-                                      comment._id
-                                    ); // Debugging
-                                    if (!comment._id) {
-                                      console.error(
-                                        "Comment ID is missing!",
-                                        comment
-                                      );
-                                      alert(
-                                        "Something went wrong! Comment ID is missing."
-                                      );
-                                      return;
-                                    }
-                                    setCommentBeingEdited(comment._id);
-                                    setEditingComment({
-                                      [comment._id]: comment.text,
-                                    });
-                                  }}
-                                  className="text-blue-500 text-xs"
-                                >
-                                  Edit
-                                </button>
-
-                                <button
-                                  onClick={() =>
-                                    handleDeleteComment(post._id, comment._id)
-                                  }
-                                  className="text-red-500 text-xs"
-                                >
-                                  Delete
-                                </button>
-                              </>
-                            )}
+                            <button
+                              onClick={() =>
+                                handleEditComment(post._id, comment._id)
+                              }
+                              className="text-blue-500 text-xs"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteComment(post._id, comment._id)
+                              }
+                              className="text-red-500 text-xs"
+                            >
+                              Delete
+                            </button>
                           </div>
                         )}
                     </div>
@@ -478,7 +422,7 @@ const Posts = () => {
                       [post._id]: !prev[post._id],
                     }))
                   }
-                  className="text-blue-500 text-sm mt-1"
+                  className="text-blue-500 text-xs sm:text-sm mt-1"
                 >
                   {expandedComments[post._id]
                     ? "Hide comments"
