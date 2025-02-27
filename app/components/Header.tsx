@@ -102,7 +102,7 @@ const Header = () => {
               <>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/user" className="w-full">
-                    Posts
+                    Home
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -127,7 +127,7 @@ const Header = () => {
         className="hidden md:block"
       >
         <h1 className="text-lg font-semibold">
-          {isAdmin ? "Admin Panel" : "Posts"}
+          {isAdmin ? "Admin Panel" : "Home"}
         </h1>
       </Link>
 
