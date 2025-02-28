@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -20,6 +20,13 @@ const Profile = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<string>(user?.coverImage || "");
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setImage(user?.avatar || "");
+      setCoverImage(user?.coverImage || "");
+    }
+  }, [user]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
