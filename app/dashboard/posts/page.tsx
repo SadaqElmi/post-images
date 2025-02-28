@@ -53,6 +53,34 @@ const Posts = () => {
     null
   );
 
+  // post._id -> comment text mapping for editing comments
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editedDescription, setEditedDescription] = useState("");
+
+  const handleSavePost = async (postId: string) => {
+    if (!editedDescription.trim()) {
+      alert("Post description cannot be empty");
+      return;
+    }
+
+    try {
+      const { data: updatedPost } = await axios.put("/api/posts", {
+        postId,
+        description: editedDescription,
+      });
+
+      const updatedPosts = posts.map((p) =>
+        p._id === updatedPost._id ? updatedPost : p
+      );
+      setPosts(updatedPosts);
+      setEditingPostId(null);
+      setEditedDescription("");
+    } catch (error) {
+      console.error("Failed to update post", error);
+      alert("Failed to update post");
+    }
+  };
+
   const handleEditComment = async (postId: string, commentId: string) => {
     if (!commentId || !editingComment[commentId]?.trim()) {
       console.error("Missing commentId or empty text", {
@@ -290,17 +318,22 @@ const Posts = () => {
               {isUser && (
                 <div className="flex gap-2 ">
                   <DropdownMenu>
-                    <DropdownMenuTrigger>
+                    <DropdownMenuTrigger asChild>
                       <EllipsisVertical />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {isAuthor ? (
                         <>
-                          <DropdownMenuItem
-                            className="flex items-center gap-2 text-blue-600
-                          hover:bg-gray-100 p-2 rounded"
-                          >
-                            <Pencil size={16} /> Edit Post
+                          <DropdownMenuItem asChild>
+                            <button
+                              className="flex items-center gap-2 text-blue-600 hover:bg-gray-100 p-2 rounded w-full"
+                              onClick={() => {
+                                setEditingPostId(post._id);
+                                setEditedDescription(post.description);
+                              }}
+                            >
+                              <Pencil size={16} /> Edit Post
+                            </button>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleDeletePost(post._id)}
@@ -329,22 +362,52 @@ const Posts = () => {
             </div>
 
             {/* Post Description */}
-            <p className="py-3 sm:py-4 text-base sm:text-lg">
-              {post.description}
-            </p>
-
-            {/* Post Image */}
-            {post.imageUrl && (
-              <div className="relative w-full">
-                <Image
-                  src={post.imageUrl}
-                  alt="Post Image"
-                  height={1536}
-                  width={2048}
-                  className="rounded-lg w-full h-auto object-cover"
-                  priority
+            {editingPostId === post._id ? (
+              <div className="py-3 sm:py-4">
+                <textarea
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  className="w-full p-2 border rounded-lg text-base sm:text-lg"
+                  rows={3}
                 />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleSavePost(post._id)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingPostId(null);
+                      setEditedDescription("");
+                    }}
+                    className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
+            ) : (
+              <p className="py-3 sm:py-4 text-base sm:text-lg">
+                {post.description}
+              </p>
+            )}
+
+            {post.mediaType === "video" ? (
+              <video controls className="w-full rounded-lg">
+                <source src={post.imageUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <Image
+                src={post.imageUrl || ""}
+                alt="Post media"
+                height={1536}
+                width={2048}
+                className="rounded-lg w-full h-auto object-contain"
+                priority
+              />
             )}
 
             {/* Reaction/Like Section (Ensure Always Visible) */}

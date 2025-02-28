@@ -9,16 +9,18 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { description, imageUrl } = await req.json();
+    const { description, imageUrl, mediaType } = await req.json();
+    console.log("Creating post with:", { description, imageUrl, mediaType });
 
     const newPost = new Post({
-      authorId: session.user.id, // 🟢 Auto set from session
+      authorId: session.user.id,
       description,
       imageUrl,
+      mediaType,
     });
 
     await newPost.save();

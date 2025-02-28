@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
-import axios from "axios";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -10,60 +10,24 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useAuthStore from "@/app/store/authStore";
-import { Menu } from "lucide-react";
+import { HomeIcon, Info, PlusCircle } from "lucide-react";
 
 const Header = () => {
   const { data: session } = useSession();
   const { user, setUser, clearUser } = useAuthStore();
-  const [image, setImage] = useState<string>(user?.avatar || "");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     if (session && session.user) {
-      setUser(session.user);
-      setImage(session.user.avatar || "");
+      setUser({ ...session?.user, coverImage: session?.user.coverImage || "" });
     }
   }, [session, setUser]);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const localImageUrl = URL.createObjectURL(file);
-      setImage(localImageUrl);
-      setSelectedFile(file);
-      event.target.value = "";
-    }
-  };
-
-  const handleSaveImage = async () => {
-    if (!selectedFile) return;
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    try {
-      const response = await axios.post("/api/users/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      const uploadedImageUrl = response.data.imageUrl;
-      setImage(uploadedImageUrl);
-      if (user) {
-        setUser({ ...user, avatar: uploadedImageUrl });
-      }
-      setSelectedFile(null);
-    } catch (error) {
-      console.error("Failed to upload image", error);
-    }
-  };
-
-  const handleCancelImage = () => {
-    setImage(user?.avatar || "");
-    setSelectedFile(null);
-  };
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -73,52 +37,35 @@ const Header = () => {
   return (
     <header className="flex justify-between items-center px-4 sm:px-6 py-4 bg-white shadow-sm">
       {/* Mobile Menu */}
-      <div className="md:hidden">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuLabel>
-              {isAdmin ? "Admin Navigation" : "Navigation"}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {isAdmin ? (
-              <>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/admin" className="w-full">
-                    Admin Panel
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/posts" className="w-full">
-                    Manage Posts
-                  </Link>
-                </DropdownMenuItem>
-              </>
-            ) : (
-              <>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/user" className="w-full">
-                    Home
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/user/createpost" className="w-full">
-                    Create Post
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/user/about" className="w-full">
-                    About Us
-                  </Link>
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="md:hidden flex  items-center w-full">
+        {/* Logo (Separate from Icons) */}
+        <Link href={isAdmin ? "/dashboard/admin" : "/dashboard/user"}>
+          <div className="bg-white text-[#1877f2] rounded-full h-8 w-8 flex items-center justify-center font-bold text-xl">
+            F
+          </div>
+        </Link>
+
+        {/* Mobile Navigation (Icons) */}
+        <div className="flex gap-5 items-center justify-center w-full">
+          <Link
+            href="/dashboard/user"
+            className="p-2 hover:bg-gray-100 rounded-md flex items-center justify-center"
+          >
+            <HomeIcon className="h-6 w-6 text-[#1877f2]" />
+          </Link>
+          <Link
+            href="/dashboard/user/createpost"
+            className="p-2 hover:bg-gray-100 rounded-md flex items-center justify-center"
+          >
+            <PlusCircle className="h-6 w-6 text-[#1877f2]" />
+          </Link>
+          <Link
+            href="/dashboard/user/about"
+            className="p-2 hover:bg-gray-100 rounded-md flex items-center justify-center"
+          >
+            <Info className="h-6 w-6 text-[#1877f2]" />
+          </Link>
+        </div>
       </div>
 
       {/* Desktop Logo */}
@@ -158,61 +105,40 @@ const Header = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer object-cover">
-              <AvatarImage src={image} alt="Profile" className="object-cover" />
+              <AvatarImage
+                src={user?.avatar}
+                alt="Profile"
+                className="object-cover"
+              />
               <AvatarFallback>
                 {user?.name?.charAt(0).toUpperCase() || (isAdmin ? "A" : "U")}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="w-48 sm:w-56">
-            <DropdownMenuLabel>User: {user?.name}</DropdownMenuLabel>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <input
-                    accept="image/*"
-                    type="file"
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={handleImageChange}
-                  />
-                </div>
+              <Link href="/dashboard/profile">
+                <DropdownMenuItem>
+                  Profile
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
+
+              <DropdownMenuItem>
+                Settings
+                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </DropdownMenuItem>
-              {selectedFile && (
-                <>
-                  <DropdownMenuItem asChild>
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={handleSaveImage}
-                        className="text-white bg-blue-500 p-1 rounded-md w-full"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleCancelImage}
-                    className="cursor-pointer"
-                  >
-                    <span className="text-red-600 w-full">Cancel</span>
-                  </DropdownMenuItem>
-                </>
-              )}
             </DropdownMenuGroup>
+
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              Log out
+              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* Desktop Logout */}
-        <Button
-          onClick={handleLogout}
-          className="hidden sm:block"
-          variant="outline"
-        >
-          Logout
-        </Button>
       </div>
     </header>
   );

@@ -18,6 +18,7 @@ export interface Post {
   authorId: string | User;
   description: string;
   imageUrl?: string;
+  mediaType?: string;
   likes: string[];
   comments: Comment[];
   createdAt: string;

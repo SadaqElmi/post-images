@@ -28,6 +28,7 @@ export const authOptions: AuthOptions = {
             email: user.email,
             role: user.role,
             avatar: user.avatar,
+            coverImage: user.coverImage,
           };
         }
         throw new Error("Invalid credentials");
@@ -68,6 +69,7 @@ export const authOptions: AuthOptions = {
       session.user.id = token.id as string;
       session.user.role = token.role as string;
       session.user.avatar = token.avatar as string;
+      session.user.coverImage = token.coverImage as string;
       return session;
     },
   },

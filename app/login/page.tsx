@@ -32,7 +32,6 @@ const Login = () => {
       password,
       redirect: false,
     });
-
     if (result?.error) {
       toast.error(result.error);
       setLoading(false);
@@ -48,6 +47,7 @@ const Login = () => {
     }
 
     setLoading(false);
+    toast.success("Login successfully!");
   };
 
   //const handleGoogleLogin = async () => {

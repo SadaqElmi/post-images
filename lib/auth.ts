@@ -11,5 +11,6 @@ declare module "next-auth" {
     email: string;
     role: string;
     avatar: string;
+    coverImage?: string;
   }
 }

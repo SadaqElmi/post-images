@@ -7,6 +7,7 @@ interface AuthState {
     email: string;
     role: string;
     avatar: string;
+    coverImage: string;
   } | null;
   setUser: (user: AuthState["user"]) => void;
   clearUser: () => void;

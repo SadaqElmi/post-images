@@ -49,3 +49,38 @@ export async function DELETE(req: NextRequest) {
     );
   }
 }
+
+export async function PUT(req: NextRequest) {
+  try {
+    await connectDB();
+    const { postId, description } = await req.json();
+
+    if (!postId || !description) {
+      return NextResponse.json(
+        { error: "Post ID and description are required" },
+        { status: 400 }
+      );
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { description },
+      { new: true }
+    )
+      .populate("authorId", "name avatar")
+      .populate("comments.userId", "name avatar")
+      .lean();
+
+    if (!updatedPost) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(updatedPost);
+  } catch (error) {
+    console.error("Error updating post:", error);
+    return NextResponse.json(
+      { error: "Failed to update post" },
+      { status: 500 }
+    );
+  }
+}

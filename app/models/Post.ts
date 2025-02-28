@@ -11,6 +11,7 @@ interface IPost extends Document {
   authorId: Types.ObjectId;
   description: string;
   imageUrl?: string;
+  mediaType?: string;
   likes: Types.ObjectId[];
   comments: IComment[];
   createdAt: Date;
@@ -32,6 +33,8 @@ const PostSchema = new Schema<IPost>(
     authorId: { type: Schema.Types.ObjectId, ref: "User" },
     description: { type: String, required: true },
     imageUrl: { type: String, default: null },
+    mediaType: { type: String, default: null },
+
     likes: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
     comments: { type: [CommentSchema], default: [] },
   },

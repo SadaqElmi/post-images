@@ -20,19 +20,20 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
+    const base64Media = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
+    const uploadResponse = await cloudinary.uploader.upload(base64Media, {
       folder: "posts",
+      resource_type: "auto", // Detects if the file is an image or video
     });
 
     return NextResponse.json({
-      imageUrl: uploadResponse.secure_url,
+      imageUrl: uploadResponse.secure_url, // Rename to imageUrl for clarity
     });
   } catch (error) {
-    console.error("Cloudinary Upload Error:", error);
+    console.error("Upload Error:", error);
     return NextResponse.json(
-      { error: "Failed to upload image" },
+      { error: "Failed to upload media" },
       { status: 500 }
     );
   }

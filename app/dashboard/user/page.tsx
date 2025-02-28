@@ -19,6 +19,7 @@ const Users = () => {
           email: session.user.email,
           role: session.user.role,
           avatar: session.user.avatar,
+          coverImage: session.user.coverImage || "",
         });
       }
     } else if (status === "unauthenticated") {
