@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      imageUrl: uploadResponse.secure_url,
+      coverImage: uploadResponse.secure_url,
       user: updatedUser,
     });
   } catch (error) {

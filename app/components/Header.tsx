@@ -25,7 +25,10 @@ const Header = () => {
 
   useEffect(() => {
     if (session && session.user) {
-      setUser({ ...session?.user, coverImage: session?.user.coverImage || "" });
+      setUser({
+        ...session?.user,
+        coverImage: session?.user.coverImage || "",
+      });
     }
   }, [session, setUser]);
 
@@ -106,7 +109,8 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer object-cover">
               <AvatarImage
-                src={user?.avatar}
+                //src={user?.avatar}
+                src={`${user?.avatar}?t=${Date.now()}`}
                 alt="Profile"
                 className="object-cover"
               />

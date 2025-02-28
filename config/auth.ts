@@ -68,8 +68,9 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       session.user.id = token.id as string;
       session.user.role = token.role as string;
-      session.user.avatar = token.avatar as string;
-      session.user.coverImage = token.coverImage as string;
+      const freshUser = await User.findById(token.id);
+      session.user.avatar = freshUser?.avatar || token.avatar;
+      session.user.coverImage = freshUser?.coverImage;
       return session;
     },
   },

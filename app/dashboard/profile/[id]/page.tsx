@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -8,12 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import useAuthStore from "@/app/store/authStore";
-import ProfilePage from "./posts";
+import ProfilePage from "../posts";
 import Loading from "@/app/loading";
 import Image from "next/image";
 
 const Profile = () => {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const { user, setUser } = useAuthStore();
   const [image, setImage] = useState<string>(user?.avatar || "");
@@ -39,11 +39,10 @@ const Profile = () => {
       const response = await axios.post("/api/users/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      await update(); // Next-auth session update
-      setUser({ ...response.data }); // Force Zustand update
-      const uploadedImageUrl = response.data.avatar;
+      const uploadedImageUrl = response.data.imageUrl;
       setImage(`${uploadedImageUrl}?t=${Date.now()}`);
       if (user) setUser({ ...user, avatar: uploadedImageUrl });
+      router.refresh();
       setSelectedFile(null);
     } catch (error) {
       console.error("Failed to upload image", error);
@@ -71,18 +70,14 @@ const Profile = () => {
     if (!selectedCoverFile) return;
     const formData = new FormData();
     formData.append("file", selectedCoverFile);
-
     try {
       const response = await axios.post("/api/users/uploadCover", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setUser(response.data);
-      const uploadedImageUrl = response.data.coverImage;
-      setCoverImage(`${uploadedImageUrl}?t=${Date.now()}`);
-
-      if (user) {
-        setUser({ ...user, coverImage: uploadedImageUrl });
-      }
+      const uploadedCoverUrl = response.data.imageUrl;
+      setCoverImage(`${uploadedCoverUrl}?t=${Date.now()}`);
+      if (user) setUser({ ...user, coverImage: uploadedCoverUrl });
+      router.refresh();
       setSelectedCoverFile(null);
     } catch (error) {
       console.error("Failed to upload cover image", error);
@@ -94,12 +89,28 @@ const Profile = () => {
     setSelectedCoverFile(null);
   };
 
-  if (status === "loading")
-    return (
-      <div>
-        <Loading />
-      </div>
-    );
+  useEffect(() => {
+    if (!selectedCoverFile) {
+      setCoverImage(user?.coverImage || "");
+    }
+  }, [user?.coverImage, selectedCoverFile]);
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setImage(user?.avatar || "");
+    }
+  }, [user?.avatar, selectedFile]);
+
+  useEffect(() => {
+    if (session && session.user) {
+      setUser({
+        ...session.user,
+        coverImage: session.user.coverImage || "",
+      });
+    }
+  }, [session, setUser]);
+
+  if (status === "loading") return <Loading />;
   if (status === "unauthenticated") router.push("/login");
 
   return (

@@ -28,12 +28,15 @@ import {
   EllipsisVertical,
   ShieldAlertIcon,
 } from "lucide-react";
+//import { useRouter } from "next/navigation";
 
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
   const isUser = session?.user?.role === "user";
+  //const router = useRouter();
+
   // State for comment texts (keyed by post ID)
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
   const [commentLoading, setCommentLoading] = useState<string | null>(null);
@@ -57,6 +60,9 @@ const Posts = () => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState("");
 
+  //const navigateToCase = (id: string) => {
+  //  router.push(`/dashboard/profile/${id}`);
+  //};
   const handleSavePost = async (postId: string) => {
     if (!editedDescription.trim()) {
       alert("Post description cannot be empty");
@@ -288,7 +294,9 @@ const Posts = () => {
             {/* Post Header */}
             <div className="flex items-center gap-2 sm:gap-3 justify-between">
               <div className="flex items-center gap-3">
-                <Avatar>
+                <Avatar
+                // onClick={() => navigateToCase(authorId)}
+                >
                   <AvatarImage
                     src={author?.avatar || undefined}
                     alt="Profile"
@@ -299,7 +307,10 @@ const Posts = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-lg font-semibold">
+                  <h2
+                    //onClick={() => navigateToCase(authorId)}
+                    className="text-lg font-semibold"
+                  >
                     {author?.name || "..."}
                   </h2>
                   <p className="text-sm text-gray-600">
