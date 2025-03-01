@@ -17,11 +17,17 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useAuthStore from "@/app/store/authStore";
 import { HomeIcon, Info, PlusCircle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import useLanguageStore from "@/app/store/languageStore";
+import { translations } from "@/utils/translations";
 
 const Header = () => {
   const { data: session } = useSession();
   const { user, setUser, clearUser } = useAuthStore();
   const isAdmin = user?.role === "admin";
+
+  const { language, toggleLanguage } = useLanguageStore();
+  const t = translations[language];
 
   useEffect(() => {
     if (session && session.user) {
@@ -77,7 +83,7 @@ const Header = () => {
         className="hidden md:block"
       >
         <h1 className="text-lg font-semibold">
-          {isAdmin ? "Admin Panel" : "Guriga"}
+          {isAdmin ? t.adminPanel : t.home}
         </h1>
       </Link>
 
@@ -90,14 +96,14 @@ const Header = () => {
         ) : (
           <>
             <Link href="/dashboard/user/createpost">
-              <Button variant="ghost">Abuur Qoraalada</Button>
+              <Button variant="ghost">{t.createPost}</Button>
             </Link>
             <Link
               href={
                 isAdmin ? "/dashboard/admin/about" : "/dashboard/user/about"
               }
             >
-              <Button variant="ghost">Annaga Xogteena</Button>
+              <Button variant="ghost">{t.aboutUs}</Button>
             </Link>
           </>
         )}
@@ -105,6 +111,17 @@ const Header = () => {
 
       {/* User Section */}
       <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">SO</span>
+            <Switch
+              checked={language === "en"}
+              onCheckedChange={toggleLanguage}
+              aria-label="Toggle language"
+            />
+            <span className="text-sm font-medium">EN</span>
+          </div>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer object-cover">
@@ -120,25 +137,25 @@ const Header = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Akoon key</DropdownMenuLabel>
+            <DropdownMenuLabel>{t.account}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <Link href="/dashboard/profile">
                 <DropdownMenuItem>
-                  astaanta guud
+                  {t.profile}
                   <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </Link>
 
               <DropdownMenuItem>
-                Dejinta
+                {t.settings}
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
-              Kabixid
+              {t.logout}
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
