@@ -41,22 +41,26 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      // For social providers like Google, save the user if they don't exist
+      await connectDB();
       if (account?.provider === "google") {
-        await connectDB();
-        const existingUser = await User.findOne({ email: user.email });
+        let existingUser = await User.findOne({ email: user.email });
         if (!existingUser) {
-          const newUser = new User({
+          existingUser = new User({
             name: user.name,
             email: user.email,
             avatar: user.image, // Google returns the image as `user.image`
-            role: "user", // set a default role; you can adjust as needed
+            role: "user", // default role
           });
-          await newUser.save();
+          await existingUser.save();
         }
+        // Overwrite the Google id with the MongoDB _id
+        user.id = existingUser._id.toString();
+        user.role = existingUser.role;
+        user.avatar = existingUser.avatar;
       }
       return true;
     },
+
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -65,6 +69,7 @@ export const authOptions: AuthOptions = {
       }
       return token;
     },
+
     async session({ session, token }) {
       session.user.id = token.id as string;
       session.user.role = token.role as string;

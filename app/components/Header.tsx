@@ -31,9 +31,10 @@ const Header = () => {
 
   useEffect(() => {
     if (session && session.user) {
+      console.log("Session user:", session.user);
       setUser({
-        ...session?.user,
-        coverImage: session?.user.coverImage || "",
+        ...session.user,
+        coverImage: session.user.coverImage || "",
       });
     }
   }, [session, setUser]);
@@ -126,8 +127,7 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer object-cover">
               <AvatarImage
-                //src={user?.avatar}
-                src={`${user?.avatar}?t=${Date.now()}`}
+                src={user?.avatar}
                 alt="astaanta guud"
                 className="object-cover"
               />
@@ -146,11 +146,12 @@ const Header = () => {
                   <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </Link>
-
-              <DropdownMenuItem>
-                {t.settings}
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              <Link href="/dashboard/Settings">
+                <DropdownMenuItem>
+                  {t.settings}
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
