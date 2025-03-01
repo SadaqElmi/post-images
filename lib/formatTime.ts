@@ -18,16 +18,16 @@ export function formatPostTime(dateString: string): string {
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
 
     if (diffInMinutes < 1) {
-      return "Just now";
+      return "Isla Hadda";
     } else if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
+      return `${diffInMinutes} daqiiqo${diffInMinutes > 1 ? "s" : ""} Kahor`;
     } else {
       return format(date, "h:mm a"); // e.g., 4:30 PM
     }
   }
 
   if (isYesterday(date)) {
-    return `Yesterday at ${format(date, "h:mm a")}`; // e.g., Yesterday at 4:30 PM
+    return `Shalay waqtiga ${format(date, "h:mm a")}`; // e.g., Yesterday at 4:30 PM
   }
 
   const diffInDays = Math.floor(

@@ -7,7 +7,7 @@ const About = () => {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
-          About This Project
+          Xog kusaab San Mashruucan
         </h1>
 
         <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
@@ -25,84 +25,84 @@ const About = () => {
           </div>
           <div className="w-full md:w-2/3">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Hi, I&apos;m Sadaq Elmi Abdulle
+              Salaan, Waxan Ahay Sadaq Elmi Abdulle
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-              I&apos;m a full-stack developer passionate about creating
-              meaningful web applications. This project was built with Next.js
-              and Tailwind CSS, focusing on creating a modern social media
-              experience with real-time interactions.
+              Waxaan ahay horumariye full-stack ah oo jecel abuurista websaydhyo
+              wax ku ool ah. Mashruucan waxa uu adeegsadaa Next.js iyo Tailwind
+              CSS, isaga oo diiradda saaraya khibrad casri ah oo bulsho ah oo
+              leh is-dhexgal waqtiga-dhabta ah.
             </p>
           </div>
         </div>
 
         <section className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            User Features
+            Astaamaha Isticmaalaha
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <li className="flex items-center">
               <span className="text-blue-500 mr-2">✔</span>
-              Create and share posts with images
+              Samee oo la wadaag qoraallo leh sawirro
             </li>
             <li className="flex items-center">
               <span className="text-blue-500 mr-2">✔</span>
-              Comment on posts and engage with others
+              Ka faallood qoraallada oo la falgal dadka kale
             </li>
             <li className="flex items-center">
               <span className="text-blue-500 mr-2">✔</span>
-              Like and interact with content
+              La falgal nuxurka adigoo isticmaalaya like
             </li>
             <li className="flex items-center">
               <span className="text-blue-500 mr-2">✔</span>
-              Update profile and avatar
+              Cusboonaysii profile-kaaga iyo sawirkaaga
             </li>
             <li className="flex items-center">
               <span className="text-blue-500 mr-2">✔</span>
-              View personalized dashboard
+              Daawo Sabuurad kuu gaar ah
             </li>
             <li className="flex items-center">
               <span className="text-blue-500 mr-2">✔</span>
-              Secure authentication system
+              Nidaam xasilan oo xagga gelitaanka ah
             </li>
           </ul>
         </section>
 
         <section className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            Admin Features
+            Astaamaha Maamulaha
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <li className="flex items-center">
               <span className="text-green-500 mr-2">⚙</span>
-              Manage all user accounts
+              Maamul dhammaan xisaabaadka isticmaale
             </li>
             <li className="flex items-center">
               <span className="text-green-500 mr-2">⚙</span>
-              Moderate content and comments
+              La soco oo hagaajiyo nuxurka iyo faallooyinka
             </li>
             <li className="flex items-center">
               <span className="text-green-500 mr-2">⚙</span>
-              Access advanced analytics
+              Hel falanqayn qoto dheer
             </li>
             <li className="flex items-center">
               <span className="text-green-500 mr-2">⚙</span>
-              Manage system configurations
+              Maamul habeynta nidaamka
             </li>
             <li className="flex items-center">
               <span className="text-green-500 mr-2">⚙</span>
-              View detailed activity logs
+              Daawo diiwaan falanqeyn faahfaahsan
             </li>
             <li className="flex items-center">
               <span className="text-green-500 mr-2">⚙</span>
-              Special admin dashboard
+              Dashboard u gaar ah maamulaha
             </li>
           </ul>
         </section>
 
         <section className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            Technology Stack
+            Tiknoolajiyada la adeegsaday
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
@@ -128,7 +128,7 @@ const About = () => {
 
         <section className="text-center mt-12">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Want to know more?
+            Ma rabtaa inaad wax badan ogaato?
           </h3>
           <Link
             href="https://wa.me/252619316187"
@@ -136,7 +136,7 @@ const About = () => {
             rel="noopener noreferrer"
             className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300"
           >
-            Contact Me on WhatsApp
+            La soo Xiriir WhatsApp
           </Link>
         </section>
       </div>

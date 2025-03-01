@@ -168,14 +168,14 @@ const PostsComponent = ({ userId }: { userId: string }) => {
                                 setEditedDescription(post.description);
                               }}
                             >
-                              <Pencil size={16} /> Edit Post
+                              <Pencil size={16} /> Badal Maqalka
                             </button>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleDeletePost(post._id)}
                             className="flex items-center gap-2 text-red-600 hover:bg-gray-100 p-2 rounded"
                           >
-                            <Trash2 size={16} /> Delete Post
+                            <Trash2 size={16} /> Tir Tir Maqalka
                           </DropdownMenuItem>
                         </>
                       ) : (
@@ -256,7 +256,7 @@ const PostsComponent = ({ userId }: { userId: string }) => {
                   <HandThumbUpIcon className="w-4 h-4 text-blue-500" />
                   <span>{post.likes.length}</span>
                 </div>
-                <span>{post.comments.length} Comments</span>
+                <span>{post.comments.length} Faalloyinka</span>
               </div>
 
               <div className="flex justify-around mt-2 pt-2">
@@ -270,11 +270,11 @@ const PostsComponent = ({ userId }: { userId: string }) => {
                   }`}
                 >
                   <HandThumbUpIcon className="w-5 h-5" />
-                  <span>Like</span>
+                  <span>ka helid</span>
                 </button>
                 <button className="flex items-center gap-1">
                   <ChatBubbleLeftIcon className="w-5 h-5" />
-                  <span>Comment</span>
+                  <span>Faallo</span>
                 </button>
               </div>
             </div>

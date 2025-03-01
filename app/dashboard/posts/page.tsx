@@ -30,6 +30,18 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
@@ -60,7 +72,7 @@ const Posts = () => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState("");
 
-  const navigateToCase = (id: string) => {
+  const navigateToProfile = (id: string) => {
     router.push(`/dashboard/profile/${id}`);
   };
   const handleSavePost = async (postId: string) => {
@@ -294,7 +306,7 @@ const Posts = () => {
             {/* Post Header */}
             <div className="flex items-center gap-2 sm:gap-3 justify-between">
               <div className="flex items-center gap-3 cursor-pointer">
-                <Avatar onClick={() => navigateToCase(authorId)}>
+                <Avatar onClick={() => navigateToProfile(authorId)}>
                   <AvatarImage
                     src={author?.avatar || undefined}
                     alt="Profile"
@@ -306,7 +318,7 @@ const Posts = () => {
                 </Avatar>
                 <div>
                   <h2
-                    onClick={() => navigateToCase(authorId)}
+                    onClick={() => navigateToProfile(authorId)}
                     className="text-lg font-semibold"
                   >
                     {author?.name || "..."}
@@ -317,15 +329,36 @@ const Posts = () => {
                 </div>
               </div>
               {isAdmin && (
-                <button
-                  onClick={() => handleDeletePost(post._id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 size={20} />
-                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="text-red-600 hover:text-red-800">
+                      <Trash2 size={20} />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete the post.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeletePost(post._id)}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
+
               {isUser && (
-                <div className="flex gap-2 ">
+                <div className="flex gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <EllipsisVertical />
@@ -333,6 +366,7 @@ const Posts = () => {
                     <DropdownMenuContent>
                       {isAuthor ? (
                         <>
+                          {/* Edit Post Option */}
                           <DropdownMenuItem asChild>
                             <button
                               className="flex items-center gap-2 text-blue-600 hover:bg-gray-100 p-2 rounded w-full"
@@ -341,14 +375,37 @@ const Posts = () => {
                                 setEditedDescription(post.description);
                               }}
                             >
-                              <Pencil size={16} /> Edit Post
+                              <Pencil size={16} /> Habey Maqaalka
                             </button>
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeletePost(post._id)}
-                            className="flex items-center gap-2 text-red-600 hover:bg-gray-100 p-2 rounded"
-                          >
-                            <Trash2 size={16} /> Delete Post
+
+                          {/* Delete Post Option with AlertDialog */}
+                          <DropdownMenuItem asChild>
+                            <AlertDialog>
+                              <AlertDialogTrigger className="w-full flex items-center gap-2 text-red-600 hover:bg-gray-100 p-2 rounded">
+                                <Trash2 size={16} /> TirTir Maqaalka
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Ma hubtaa gabi ahaanba?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Tallaabadan lagama noqon karo hadi aad
+                                    Tirtirtid. Tani waxay si joogto ah u tirtiri
+                                    doontaa Maqaalka
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Jooji</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeletePost(post._id)}
+                                  >
+                                    Siiwad
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </DropdownMenuItem>
                         </>
                       ) : (
@@ -427,7 +484,7 @@ const Posts = () => {
                   <HandThumbUpIcon className="w-4 h-4 text-blue-500" />
                   <span>{post.likes.length}</span>
                 </div>
-                <span>{post.comments.length} Comments</span>
+                <span>{post.comments.length} faallooyinka</span>
               </div>
               <div className="flex justify-around border-t border-gray-200 mt-2 pt-2">
                 <button
@@ -440,26 +497,29 @@ const Posts = () => {
                   }`}
                 >
                   <HandThumbUpIcon className="w-5 h-5" />
-                  <span>Like</span>
+                  <span>ka helid</span>
                 </button>
                 <button
                   onClick={() => commentInputRefs.current[post._id]?.focus()}
                   className="flex items-center gap-1 px-4 py-2 hover:text-blue-500"
                 >
                   <ChatBubbleLeftIcon className="w-5 h-5" />
-                  <span>Comment</span>
+                  <span>Faallo</span>
                 </button>
               </div>
             </div>
 
             {/* Comment Section */}
             <div className="mt-2 sm:mt-3">
-              <div className="flex gap-2 items-center">
-                <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+              <div className="flex gap-2 items-center cursor-pointer">
+                <Avatar className="h-8 w-8 sm:h-10 sm:w-10 ">
                   <AvatarImage
                     src={session?.user?.avatar || undefined}
                     alt="Profile"
                     className="object-cover"
+                    onClick={() =>
+                      session?.user?.id && navigateToProfile(session.user.id)
+                    }
                   />
                   <AvatarFallback>
                     {session?.user?.name?.charAt(0).toUpperCase() || "U"}
@@ -478,14 +538,14 @@ const Posts = () => {
                     }))
                   }
                   className="border p-2 rounded w-full outline-none text-sm sm:text-base"
-                  placeholder="Write a comment..."
+                  placeholder="qor faallo..."
                 />
                 <button
                   onClick={() => handleCommentSubmit(post._id)}
                   disabled={commentLoading === post._id}
                   className="bg-blue-500 text-white px-3 py-1 rounded"
                 >
-                  {commentLoading === post._id ? "..." : "Post"}
+                  {commentLoading === post._id ? "..." : "Maqaal"}
                 </button>
               </div>
 
@@ -499,7 +559,16 @@ const Posts = () => {
                     key={comment._id}
                     className="flex items-start gap-2 sm:gap-3 mt-2 sm:mt-3"
                   >
-                    <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                    <Avatar
+                      className="h-6 w-6 sm:h-8 sm:w-8"
+                      onClick={() => {
+                        if (typeof comment.userId === "string") {
+                          navigateToProfile(comment.userId);
+                        } else if (comment.userId?._id) {
+                          navigateToProfile(comment.userId._id);
+                        }
+                      }}
+                    >
                       <AvatarImage
                         src={commentUser?.avatar || undefined}
                         alt="Profile"
@@ -559,20 +628,6 @@ const Posts = () => {
                               <>
                                 <button
                                   onClick={() => {
-                                    console.log(
-                                      "Editing comment ID:",
-                                      comment._id
-                                    ); // Debugging
-                                    if (!comment._id) {
-                                      console.error(
-                                        "Comment ID is missing!",
-                                        comment
-                                      );
-                                      alert(
-                                        "Something went wrong! Comment ID is missing."
-                                      );
-                                      return;
-                                    }
                                     setCommentBeingEdited(comment._id);
                                     setEditingComment({
                                       [comment._id]: comment.text,
@@ -580,7 +635,7 @@ const Posts = () => {
                                   }}
                                   className="text-blue-500 text-xs"
                                 >
-                                  Edit
+                                  Habey
                                 </button>
                                 <button
                                   onClick={() =>
@@ -588,7 +643,7 @@ const Posts = () => {
                                   }
                                   className="text-red-500 text-xs"
                                 >
-                                  Delete
+                                  TirTir
                                 </button>
                               </>
                             )}

@@ -77,7 +77,7 @@ const Header = () => {
         className="hidden md:block"
       >
         <h1 className="text-lg font-semibold">
-          {isAdmin ? "Admin Panel" : "Home"}
+          {isAdmin ? "Admin Panel" : "Guriga"}
         </h1>
       </Link>
 
@@ -85,19 +85,19 @@ const Header = () => {
       <div className="hidden md:flex gap-4">
         {isAdmin ? (
           <Link href="/dashboard/posts">
-            <Button variant="ghost">Manage Posts</Button>
+            <Button variant="ghost">Maamul Qoraalada</Button>
           </Link>
         ) : (
           <>
             <Link href="/dashboard/user/createpost">
-              <Button variant="ghost">Create Post</Button>
+              <Button variant="ghost">Abuur Qoraalada</Button>
             </Link>
             <Link
               href={
                 isAdmin ? "/dashboard/admin/about" : "/dashboard/user/about"
               }
             >
-              <Button variant="ghost">About Us</Button>
+              <Button variant="ghost">Annaga Xogteena</Button>
             </Link>
           </>
         )}
@@ -111,7 +111,7 @@ const Header = () => {
               <AvatarImage
                 //src={user?.avatar}
                 src={`${user?.avatar}?t=${Date.now()}`}
-                alt="Profile"
+                alt="astaanta guud"
                 className="object-cover"
               />
               <AvatarFallback>
@@ -120,25 +120,25 @@ const Header = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Akoon key</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <Link href="/dashboard/profile">
                 <DropdownMenuItem>
-                  Profile
+                  astaanta guud
                   <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </Link>
 
               <DropdownMenuItem>
-                Settings
+                Dejinta
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
-              Log out
+              Kabixid
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>

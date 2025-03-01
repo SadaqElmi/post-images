@@ -84,7 +84,7 @@ const CreatePost = () => {
           </Avatar>
           <textarea
             className="w-full border-none focus:ring-0 text-sm bg-gray-100 rounded-xl p-3 resize-none"
-            placeholder="What's on your mind?"
+            placeholder="Maxaa maskaxdaada ku jira?"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
@@ -125,7 +125,7 @@ const CreatePost = () => {
           {/* Image Upload */}
           <label className="flex items-center gap-2 cursor-pointer text-blue-500 hover:bg-gray-100 px-3 py-2 rounded-md">
             <ImageIcon className="h-5 w-5" />
-            <span>Photo</span>
+            <span>Sawir</span>
             <input
               type="file"
               accept="image/*"
@@ -137,7 +137,7 @@ const CreatePost = () => {
           {/* Video Upload */}
           <label className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-gray-100 px-3 py-2 rounded-md">
             <VideoIcon className="h-5 w-5" />
-            <span>Video</span>
+            <span>Muuqal</span>
             <input
               type="file"
               accept="video/*"
@@ -152,7 +152,7 @@ const CreatePost = () => {
             disabled={loading}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
-            {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Post"}
+            {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Maqaal"}
           </Button>
         </div>
       </div>

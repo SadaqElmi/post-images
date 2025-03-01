@@ -19,11 +19,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Pencil, Trash2, EyeOff, EllipsisVertical } from "lucide-react";
+import { Pencil, Trash2, EllipsisVertical } from "lucide-react";
 
 import { formatPostTime } from "@/lib/formatTime";
 import Image from "next/image";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const ProfilePage = () => {
   const { data: session, status } = useSession();
@@ -282,10 +293,10 @@ const ProfilePage = () => {
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* User's Posts */}
       <div className="border-t pt-8">
-        <h2 className="text-2xl font-bold mb-6">Your Posts</h2>
+        <h2 className="text-2xl font-bold mb-6">Maqaaladaada</h2>
         {posts.length === 0 && (
           <div className="text-center text-gray-500">
-            You haven&apos;t created any posts yet.
+            Weli ma aadan abuurin wax Maqaal ah
           </div>
         )}
 
@@ -328,9 +339,9 @@ const ProfilePage = () => {
                       <DropdownMenuTrigger asChild>
                         <EllipsisVertical />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <>
-                          <DropdownMenuItem asChild>
+                      <DropdownMenuContent asChild>
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenuItem>
                             <button
                               className="flex items-center gap-2 text-blue-600 hover:bg-gray-100 p-2 rounded w-full"
                               onClick={() => {
@@ -338,26 +349,44 @@ const ProfilePage = () => {
                                 setEditedDescription(post.description);
                               }}
                             >
-                              <Pencil size={16} /> Edit Post
+                              <Pencil size={16} /> Habey Maqalka
                             </button>
                           </DropdownMenuItem>
 
-                          <DropdownMenuItem
-                            onClick={() => handleDeletePost(post._id)}
-                            className="flex items-center gap-2 text-red-600 hover:bg-gray-100 p-2 rounded"
-                          >
-                            <Trash2 size={16} /> Delete Post
+                          <DropdownMenuItem>
+                            <AlertDialog>
+                              <AlertDialogTrigger className="w-full flex items-center gap-2 text-red-600 hover:bg-gray-100 p-2 rounded">
+                                <Trash2 size={16} /> TirTir Maqaalka
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Ma hubtaa inaad tirtirto maqaalkan?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Tirtiriddan ma noqon karto dib u celin.
+                                    Maqaalkani waa la tirtiri doonaa si buuxda.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Jooji</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeletePost(post._id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    TirTir
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </DropdownMenuItem>
-
-                          <DropdownMenuItem className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded">
-                            <EyeOff size={16} /> Hide Post
-                          </DropdownMenuItem>
-                        </>
+                        </div>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                 )}
               </div>
+
               {/* Post Description */}
               {editingPostId === post._id ? (
                 <div className="py-3 sm:py-4">
@@ -414,7 +443,7 @@ const ProfilePage = () => {
                     <HandThumbUpIcon className="w-4 h-4 text-blue-500" />
                     <span>{post.likes.length}</span>
                   </div>
-                  <span>{post.comments.length} Comments</span>
+                  <span>{post.comments.length} Faallooyin</span>
                 </div>
                 <div className="flex justify-around border-t border-gray-200 mt-2 pt-2">
                   <button
@@ -427,14 +456,14 @@ const ProfilePage = () => {
                     }`}
                   >
                     <HandThumbUpIcon className="w-5 h-5" />
-                    <span>Like</span>
+                    <span>Ka helid</span>
                   </button>
                   <button
                     onClick={() => commentInputRefs.current[post._id]?.focus()}
                     className="flex items-center gap-1 px-4 py-2 hover:text-blue-500"
                   >
                     <ChatBubbleLeftIcon className="w-5 h-5" />
-                    <span>Comment</span>
+                    <span>faallo</span>
                   </button>
                 </div>
               </div>
@@ -465,14 +494,14 @@ const ProfilePage = () => {
                       }))
                     }
                     className="border p-2 rounded w-full outline-none text-sm sm:text-base"
-                    placeholder="Write a comment..."
+                    placeholder="qor faallo..."
                   />
                   <button
                     onClick={() => handleCommentSubmit(post._id)}
                     disabled={commentLoading === post._id}
                     className="bg-blue-500 text-white px-3 py-1 rounded"
                   >
-                    {commentLoading === post._id ? "..." : "Post"}
+                    {commentLoading === post._id ? "..." : "Maqaal"}
                   </button>
                 </div>
 
@@ -533,13 +562,13 @@ const ProfilePage = () => {
                                     }
                                     className="text-blue-500 text-xs"
                                   >
-                                    Save
+                                    kaydin
                                   </button>
                                   <button
                                     onClick={() => setCommentBeingEdited(null)}
                                     className="text-gray-500 text-xs"
                                   >
-                                    Cancel
+                                    Joojin
                                   </button>
                                 </>
                               ) : (
@@ -567,7 +596,7 @@ const ProfilePage = () => {
                                     }}
                                     className="text-blue-500 text-xs"
                                   >
-                                    Edit
+                                    Habey
                                   </button>
                                   <button
                                     onClick={() =>
@@ -575,7 +604,7 @@ const ProfilePage = () => {
                                     }
                                     className="text-red-500 text-xs"
                                   >
-                                    Delete
+                                    TirTir
                                   </button>
                                 </>
                               )}

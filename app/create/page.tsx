@@ -51,9 +51,9 @@ const Register = () => {
     <div className="flex justify-center items-center min-h-screen p-4">
       <Card className="w-full max-w-md sm:w-96">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-lg sm:text-xl">Create Account</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Abuur Akoon</CardTitle>
           <CardDescription className="text-sm sm:text-base">
-            Register to get started!
+            Bilow Is diiwan galinta!
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -61,12 +61,12 @@ const Register = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-sm sm:text-base">
-                  Full Name
+                  Magaca Isticmaalaha
                 </Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Sadaq"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="h-10 sm:h-11 text-sm sm:text-base"
@@ -76,7 +76,7 @@ const Register = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm sm:text-base">
-                  Email
+                  iimaylka
                 </Label>
                 <Input
                   id="email"
@@ -91,7 +91,7 @@ const Register = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm sm:text-base">
-                  Password
+                  erayga sirta ah
                 </Label>
                 <Input
                   id="password"
@@ -108,7 +108,7 @@ const Register = () => {
                   htmlFor="confirmPassword"
                   className="text-sm sm:text-base"
                 >
-                  Confirm Password
+                  Xaqijin erayga sirta ah
                 </Label>
                 <Input
                   id="confirmPassword"
@@ -129,12 +129,12 @@ const Register = () => {
               </Button>
 
               <div className="text-center text-sm sm:text-base">
-                Already have an account?{" "}
+                Hore ma ulaheed akoon ?
                 <Link
                   href="/login"
                   className="text-red-500 hover:text-red-600 font-medium"
                 >
-                  Login here
+                  Soo gal inta
                 </Link>
               </div>
             </div>

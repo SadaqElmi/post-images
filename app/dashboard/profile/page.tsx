@@ -124,7 +124,7 @@ const Profile = () => {
           <Button>
             <label className="cursor-pointer flex items-center gap-2">
               <Pencil className="mr-2 h-4 w-4" />
-              <span>Edit Cover</span>
+              <span>Badal Dadool ka </span>
               <input
                 type="file"
                 accept="image/*"
@@ -135,8 +135,8 @@ const Profile = () => {
           </Button>
           {selectedCoverFile && (
             <div className="mt-4 flex gap-2">
-              <Button onClick={handleSaveCoverImage}>Save Cover</Button>
-              <Button onClick={handleCancelCoverImage}>Cancel Cover</Button>
+              <Button onClick={handleSaveCoverImage}>kaydin Dabool</Button>
+              <Button onClick={handleCancelCoverImage}>Joojin Dabool</Button>
             </div>
           )}
         </div>
@@ -162,7 +162,7 @@ const Profile = () => {
           <Button>
             <label className="cursor-pointer flex items-center gap-2">
               <Pencil className="mr-2 h-4 w-4" />
-              <span>Edit Profile</span>
+              <span>Badal Dadool ka</span>
               <input
                 type="file"
                 accept="image/*"
@@ -173,8 +173,8 @@ const Profile = () => {
           </Button>
           {selectedFile && (
             <div className="mt-4 flex gap-2">
-              <Button onClick={handleSaveImage}>Save</Button>
-              <Button onClick={handleCancelImage}>Cancel</Button>
+              <Button onClick={handleSaveImage}>Kaydin</Button>
+              <Button onClick={handleCancelImage}>Joojin</Button>
             </div>
           )}
         </div>
