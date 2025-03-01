@@ -112,7 +112,7 @@ const Profile = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Cover Photo */}
-      <div className="relative w-full h-48 sm:h-64 md:h-80 bg-gray-300 rounded-lg overflow-hidden">
+      <div className="relative w-full h-[312px] sm:h-[360px] md:h-80 bg-gray-300 rounded-lg overflow-hidden">
         <Image
           src={coverImage}
           alt="Cover"

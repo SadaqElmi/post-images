@@ -28,14 +28,14 @@ import {
   EllipsisVertical,
   ShieldAlertIcon,
 } from "lucide-react";
-//import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
   const isUser = session?.user?.role === "user";
-  //const router = useRouter();
+  const router = useRouter();
 
   // State for comment texts (keyed by post ID)
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
@@ -60,9 +60,9 @@ const Posts = () => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState("");
 
-  //const navigateToCase = (id: string) => {
-  //  router.push(`/dashboard/profile/${id}`);
-  //};
+  const navigateToCase = (id: string) => {
+    router.push(`/dashboard/profile/${id}`);
+  };
   const handleSavePost = async (postId: string) => {
     if (!editedDescription.trim()) {
       alert("Post description cannot be empty");
@@ -294,9 +294,7 @@ const Posts = () => {
             {/* Post Header */}
             <div className="flex items-center gap-2 sm:gap-3 justify-between">
               <div className="flex items-center gap-3 cursor-pointer">
-                <Avatar
-                // onClick={() => navigateToCase(authorId)}
-                >
+                <Avatar onClick={() => navigateToCase(authorId)}>
                   <AvatarImage
                     src={author?.avatar || undefined}
                     alt="Profile"
@@ -308,7 +306,7 @@ const Posts = () => {
                 </Avatar>
                 <div>
                   <h2
-                    //onClick={() => navigateToCase(authorId)}
+                    onClick={() => navigateToCase(authorId)}
                     className="text-lg font-semibold"
                   >
                     {author?.name || "..."}
@@ -405,21 +403,22 @@ const Posts = () => {
               </p>
             )}
 
-            {post.mediaType === "video" ? (
-              <video controls className="w-full rounded-lg">
-                <source src={post.imageUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <Image
-                src={post.imageUrl || ""}
-                alt="Post media"
-                height={1536}
-                width={2048}
-                className="rounded-lg w-full h-auto object-contain"
-                priority
-              />
-            )}
+            {post.imageUrl &&
+              (post.mediaType === "video" ? (
+                <video controls className="w-full rounded-lg">
+                  <source src={post.imageUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <Image
+                  src={post.imageUrl}
+                  alt="Post media"
+                  height={1536}
+                  width={2048}
+                  className="rounded-lg w-full h-auto object-contain"
+                  priority
+                />
+              ))}
 
             {/* Reaction/Like Section (Ensure Always Visible) */}
             <div className="mt-3 sm:mt-4 border-t border-gray-200 pt-2">
@@ -613,7 +612,7 @@ const Posts = () => {
                 >
                   {expandedComments[post._id]
                     ? "Hide comments"
-                    : `See all ${post.comments.length} comments`}
+                    : `See all comments`}
                 </button>
               )}
             </div>
