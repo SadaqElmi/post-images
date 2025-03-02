@@ -9,7 +9,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={` antialiased dark:bg-[#1c1c1d] dark:text-white`}>
         <div className="fixed z-50 w-full bg-white">
           <Header />
         </div>

@@ -285,7 +285,7 @@ const Posts = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full px-2 sm:px-4">
+    <div className="flex flex-col items-center w-full px-2 sm:px-4 ">
       {posts.map((post) => {
         const author = typeof post.authorId === "string" ? null : post.authorId;
         const displayedComments = expandedComments[post._id]
@@ -301,7 +301,7 @@ const Posts = () => {
         return (
           <div
             key={post._id}
-            className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto"
+            className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto dark:bg-[#252728]"
           >
             {/* Post Header */}
             <div className="flex items-center gap-2 sm:gap-3 justify-between">
@@ -323,7 +323,7 @@ const Posts = () => {
                   >
                     {author?.name || "..."}
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {formatPostTime(post.createdAt)}
                   </p>
                 </div>
@@ -482,9 +482,13 @@ const Posts = () => {
               <div className="flex items-center justify-between text-gray-600 text-xs sm:text-sm px-2">
                 <div className="flex items-center gap-1">
                   <HandThumbUpIcon className="w-4 h-4 text-blue-500" />
-                  <span>{post.likes.length}</span>
+                  <span className="dark:text-gray-400">
+                    {post.likes.length}
+                  </span>
                 </div>
-                <span>{post.comments.length} faallooyinka</span>
+                <span className="dark:text-gray-400">
+                  {post.comments.length} faallooyinka
+                </span>
               </div>
               <div className="flex justify-around border-t border-gray-200 mt-2 pt-2">
                 <button
@@ -492,8 +496,8 @@ const Posts = () => {
                   disabled={likingPostId === post._id}
                   className={`flex items-center gap-1 px-4 py-2 rounded ${
                     session?.user && post.likes.includes(session.user.id)
-                      ? "bg-blue-500 text-white"
-                      : "bg-transparent hover:text-blue-500"
+                      ? "bg-blue-500 text-white dark:text-blue-500 dark:bg-gray-700"
+                      : "bg-transparent hover:text-blue-500 dark:text-gray-400"
                   }`}
                 >
                   <HandThumbUpIcon className="w-5 h-5" />
@@ -501,7 +505,7 @@ const Posts = () => {
                 </button>
                 <button
                   onClick={() => commentInputRefs.current[post._id]?.focus()}
-                  className="flex items-center gap-1 px-4 py-2 hover:text-blue-500"
+                  className="flex items-center gap-1 px-4 py-2 hover:text-blue-500 dark:text-gray-400"
                 >
                   <ChatBubbleLeftIcon className="w-5 h-5" />
                   <span>Faallo</span>
@@ -537,13 +541,13 @@ const Posts = () => {
                       [post._id]: e.target.value,
                     }))
                   }
-                  className="border p-2 rounded w-full outline-none text-sm sm:text-base"
+                  className="border p-2 rounded w-full outline-none text-sm sm:text-base dark:bg-[#333334] dark:outline-none dark:border-none"
                   placeholder="qor faallo..."
                 />
                 <button
                   onClick={() => handleCommentSubmit(post._id)}
                   disabled={commentLoading === post._id}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
+                  className="bg-blue-500 text-white px-3 py-1 rounded  dark:bg-[#333334]"
                 >
                   {commentLoading === post._id ? "..." : "Maqaal"}
                 </button>
@@ -589,15 +593,15 @@ const Posts = () => {
                               [comment._id]: e.target.value,
                             })
                           }
-                          className="border p-1 rounded w-full outline-none"
+                          className="border p-1 rounded w-full outline-none  dark:bg-[#333334] dark:border-none dark:outline-none"
                         />
                       ) : (
                         <>
-                          <div className="bg-gray-100 p-2 rounded-md text-sm sm:text-base">
-                            <p className="font-semibold">
+                          <div className="bg-gray-100 p-2 rounded-md text-sm sm:text-base  dark:bg-[#333334]">
+                            <p className="font-bold text-[12px]">
                               {commentUser?.name || "Unknown User"}
                             </p>
-                            <p>{comment.text}</p>
+                            <p className="text-[12px]">{comment.text}</p>
                           </div>
                           <span className="text-gray-500 text-[10px]">
                             {formatRelativeTime(comment.createdAt)}

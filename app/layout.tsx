@@ -27,12 +27,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-[#1c1c1d] dark:text-white`}
       >
         <NextAuthSessionProvider>
           <div id="root">
             {children}
-            <Toaster position="top-right" />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                className: "dark:bg-gray-800 dark:text-white",
+              }}
+            />
           </div>
         </NextAuthSessionProvider>
       </body>
