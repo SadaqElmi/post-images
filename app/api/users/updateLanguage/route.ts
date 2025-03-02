@@ -14,6 +14,7 @@ export async function PATCH(request: Request) {
     await User.findByIdAndUpdate(session.user.id, { language });
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
 }
