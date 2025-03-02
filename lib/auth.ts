@@ -12,5 +12,7 @@ declare module "next-auth" {
     role: string;
     avatar: string;
     coverImage?: string;
+    darkMode?: boolean;
+    language: string;
   }
 }

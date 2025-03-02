@@ -11,6 +11,7 @@ export const translations = {
     settings: "Settings",
     logout: "Logout",
     darkMode: "Dark Mode",
+    language: "Language",
   },
   so: {
     adminPanel: "Maamulka Admin",
@@ -23,5 +24,6 @@ export const translations = {
     settings: "Dejinta",
     logout: "Kabixid",
     darkMode: "Madowga",
+    language: "Luuqada",
   },
 };

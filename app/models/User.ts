@@ -8,6 +8,8 @@ export interface IUser extends Document {
   avatar?: string;
   coverImage?: string;
   role: "user" | "admin";
+  darkMode: boolean;
+  language: "en" | "so";
 }
 
 const UserSchema = new Schema<IUser>(
@@ -18,6 +20,8 @@ const UserSchema = new Schema<IUser>(
     avatar: { type: String },
     coverImage: { type: String },
     role: { type: String, enum: ["user", "admin"], default: "user" },
+    darkMode: { type: Boolean, default: false },
+    language: { type: String, enum: ["en", "so"], default: "so" },
   },
   { timestamps: true }
 );

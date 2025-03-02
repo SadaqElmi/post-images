@@ -29,6 +29,7 @@ export const authOptions: AuthOptions = {
             role: user.role,
             avatar: user.avatar,
             coverImage: user.coverImage,
+            language: user.language,
           };
         }
         throw new Error("Invalid credentials");
@@ -66,14 +67,18 @@ export const authOptions: AuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.avatar = user.avatar || user.image;
+        token.darkMode = user.darkMode;
+        token.language = user.language;
       }
       return token;
     },
 
     async session({ session, token }) {
+      const freshUser = await User.findById(token.id);
       session.user.id = token.id as string;
       session.user.role = token.role as string;
-      const freshUser = await User.findById(token.id);
+      session.user.darkMode = freshUser?.darkMode ?? false;
+      session.user.language = freshUser?.language || "so";
       session.user.avatar = freshUser?.avatar || token.avatar;
       session.user.coverImage = freshUser?.coverImage;
       return session;

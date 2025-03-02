@@ -20,25 +20,14 @@ import { HomeIcon, Info, PlusCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import useLanguageStore from "@/app/store/languageStore";
 import { translations } from "@/utils/translations";
-import { useThemeStore } from "@/app/store/themeStore";
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const { user, setUser, clearUser } = useAuthStore();
   const isAdmin = user?.role === "admin";
 
   const { language, toggleLanguage } = useLanguageStore();
   const t = translations[language];
-  const { darkMode, toggleDarkMode } = useThemeStore();
-
-  useEffect(() => {
-    const html = document.documentElement;
-    if (darkMode) {
-      html.classList.add("dark");
-    } else {
-      html.classList.remove("dark");
-    }
-  }, [darkMode]);
 
   useEffect(() => {
     if (session && session.user) {
@@ -46,10 +35,69 @@ const Header = () => {
       setUser({
         ...session.user,
         coverImage: session.user.coverImage || "",
+        darkMode: session.user.darkMode || false,
+        language: session.user.language || "so", // Add this
       });
+    }
+    if (session?.user?.language) {
+      useLanguageStore
+        .getState()
+        .setLanguage(session?.user?.language as "en" | "so");
     }
   }, [session, setUser]);
 
+  useEffect(() => {
+    const html = document.documentElement;
+    if (user?.darkMode) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+  }, [user?.darkMode]); // Only run when darkMode changes
+
+  const handleDarkModeToggle = async () => {
+    try {
+      const newDarkMode = !user?.darkMode;
+
+      // Update backend
+      await fetch("/api/users/updateDarkMode", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ darkMode: newDarkMode }),
+      });
+
+      // Force session refresh
+      await update();
+
+      // Update local state after session refresh
+      setUser({
+        ...user,
+        darkMode: newDarkMode,
+      });
+
+      // Update DOM class
+      const html = document.documentElement;
+      html.classList.toggle("dark", newDarkMode);
+    } catch (error) {
+      console.error("Failed to update dark mode:", error);
+    }
+  };
+
+  const handleLanguageToggle = async (newLanguage: "en" | "so") => {
+    try {
+      // Update backend
+      await fetch("/api/users/updateLanguage", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: newLanguage }),
+      });
+
+      await update();
+      toggleLanguage();
+    } catch (error) {
+      console.error("Failed to update language:", error);
+    }
+  };
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
     clearUser();
@@ -163,15 +211,15 @@ const Header = () => {
                   className="flex justify-between items-center w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Dark Mode
+                  {t.darkMode}
                   <DropdownMenuShortcut>
                     <label className="inline-flex items-center relative">
                       <input
                         className="peer hidden"
                         id="toggle"
                         type="checkbox"
-                        checked={darkMode}
-                        onChange={() => toggleDarkMode()}
+                        checked={user?.darkMode || false}
+                        onChange={handleDarkModeToggle}
                       />
                       <div className="relative w-[80px] h-[35px] bg-white peer-checked:bg-zinc-500 rounded-full after:absolute after:content-[''] after:w-[20px] after:h-[20px] after:bg-gradient-to-r from-orange-500 to-yellow-400 peer-checked:after:from-zinc-900 peer-checked:after:to-zinc-900 after:rounded-full after:top-[7px] after:left-[11px] active:after:w-[50px] peer-checked:after:left-[68px] peer-checked:after:translate-x-[-100%] shadow-sm duration-300 after:duration-300 after:shadow-md" />
                       <svg
@@ -205,13 +253,15 @@ const Header = () => {
                   className="flex justify-between items-center w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Languages
+                  {t.language}
                   <DropdownMenuShortcut>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">SO</span>
                       <Switch
                         checked={language === "en"}
-                        onCheckedChange={toggleLanguage}
+                        onCheckedChange={(checked) =>
+                          handleLanguageToggle(checked ? "en" : "so")
+                        }
                         aria-label="Toggle language"
                       />
                       <span className="text-sm font-medium">EN</span>

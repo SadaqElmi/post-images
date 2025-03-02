@@ -1,24 +1,18 @@
-// store/languageStore.ts
 import { create } from "zustand";
 
-interface LanguageState {
+type LanguageState = {
   language: "en" | "so";
+  setLanguage: (lang: "en" | "so") => void;
   toggleLanguage: () => void;
-}
+};
 
 const useLanguageStore = create<LanguageState>((set) => ({
-  language:
-    ((typeof window !== "undefined"
-      ? localStorage.getItem("language")
-      : "en") as "en" | "so") || "en",
+  language: "en",
+  setLanguage: (lang) => set({ language: lang }),
   toggleLanguage: () =>
-    set((state) => {
-      const newLang = state.language === "en" ? "so" : "en";
-      if (typeof window !== "undefined") {
-        localStorage.setItem("language", newLang);
-      }
-      return { language: newLang };
-    }),
+    set((state) => ({
+      language: state.language === "en" ? "so" : "en",
+    })),
 }));
 
 export default useLanguageStore;
