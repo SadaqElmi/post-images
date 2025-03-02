@@ -24,7 +24,6 @@ import {
   Pencil,
   Trash2,
   EyeOff,
-  UserX,
   EllipsisVertical,
   ShieldAlertIcon,
 } from "lucide-react";
@@ -49,6 +48,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ReportDialog } from "./components/ReportDialog";
+import toast from "react-hot-toast";
 
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
@@ -174,6 +175,7 @@ const Posts = () => {
       setPosts(updatedPosts);
       setEditingComment({});
       setCommentBeingEdited(null);
+      toast.success("success to edit comment");
     } catch (error) {
       console.error("Failed to edit comment", error);
       alert("Failed to edit comment");
@@ -318,6 +320,16 @@ const Posts = () => {
     }
   };
 
+  const handleReport = async (postId: string, reason: string) => {
+    try {
+      await axios.post("/api/reports", { postId, reason });
+      toast.success("Report submitted successfully");
+    } catch (error) {
+      console.error("Failed to submit report", error);
+      alert("Failed to submit report");
+    }
+  };
+  if (!session) return <div>Please log in to view posts</div>;
   return (
     <div className="flex flex-col items-center w-full px-2 sm:px-4 ">
       {posts.map((post) => {
@@ -444,11 +456,24 @@ const Posts = () => {
                         </>
                       ) : (
                         <>
-                          <DropdownMenuItem className="flex items-center gap-2 text-red-500 hover:bg-gray-100 p-2 rounded">
-                            <UserX size={16} /> Block User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="flex items-center gap-2 text-yellow-500 hover:bg-gray-100 p-2 rounded">
-                            <ShieldAlertIcon size={16} /> Report User
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                            className="flex items-center gap-2 text-yellow-500 hover:bg-gray-100 p-2 rounded"
+                          >
+                            <div
+                              className="flex justify-between items-center w-full"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <ShieldAlertIcon size={16} />{" "}
+                              {isUser && (
+                                <ReportDialog
+                                  postId={post._id}
+                                  onReport={(reason) =>
+                                    handleReport(post._id, reason)
+                                  }
+                                />
+                              )}{" "}
+                            </div>
                           </DropdownMenuItem>
                           <DropdownMenuItem className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded">
                             <EyeOff size={16} /> Hide Post

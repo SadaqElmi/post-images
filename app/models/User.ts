@@ -10,6 +10,7 @@ export interface IUser extends Document {
   role: "user" | "admin";
   darkMode: boolean;
   language: "en" | "so";
+  bannedUntil?: Date;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -22,6 +23,7 @@ const UserSchema = new Schema<IUser>(
     role: { type: String, enum: ["user", "admin"], default: "user" },
     darkMode: { type: Boolean, default: false },
     language: { type: String, enum: ["en", "so"], default: "so" },
+    bannedUntil: { type: Date },
   },
   { timestamps: true }
 );

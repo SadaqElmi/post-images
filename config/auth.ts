@@ -16,7 +16,10 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         await connectDB();
         const user = await User.findOne({ email: credentials?.email });
-
+        if (!user) throw new Error("User not found");
+        if (user.bannedUntil && new Date(user.bannedUntil) > new Date()) {
+          throw new Error(`User banned until ${user.bannedUntil}`);
+        }
         if (
           credentials &&
           user &&
@@ -58,6 +61,13 @@ export const authOptions: AuthOptions = {
         user.id = existingUser._id.toString();
         user.role = existingUser.role;
         user.avatar = existingUser.avatar;
+
+        if (
+          existingUser.bannedUntil &&
+          new Date(existingUser.bannedUntil) > new Date()
+        ) {
+          return false;
+        }
       }
       return true;
     },

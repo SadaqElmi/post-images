@@ -150,11 +150,21 @@ const Header = () => {
       {/* Desktop Navigation */}
       <div className="hidden md:flex gap-4">
         {isAdmin ? (
-          <Link href="/dashboard/posts">
-            <Button variant="ghost" className="dark:text-white">
-              Maamul Qoraalada
-            </Button>
-          </Link>
+          <>
+            <Link href="/dashboard/posts">
+              <Button variant="ghost" className="dark:text-white">
+                Maamul Qoraalada
+              </Button>
+            </Link>
+            <Link href="/dashboard/admin/reports">
+              <Button variant="ghost" className="dark:text-white">
+                Reports
+              </Button>
+            </Link>
+            <Link href="/dashboard/user/createpost">
+              <Button variant="ghost">{t.createPost}</Button>
+            </Link>
+          </>
         ) : (
           <>
             <Link href="/dashboard/user/createpost">
