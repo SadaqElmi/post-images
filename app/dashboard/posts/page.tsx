@@ -42,6 +42,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
@@ -71,6 +79,32 @@ const Posts = () => {
   // post._id -> comment text mapping for editing comments
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState("");
+
+  const [likedUsers, setLikedUsers] = useState<
+    Array<{ _id: string; name: string; avatar: string }>
+  >([]);
+  const [isLikesDialogOpen, setIsLikesDialogOpen] = useState(false);
+  const [isLoadingLikes, setIsLoadingLikes] = useState(false);
+
+  const fetchLikedUsers = async (postId: string) => {
+    try {
+      setIsLoadingLikes(true);
+      const post = posts.find((p) => p._id === postId);
+      if (!post) return;
+
+      const { data } = await axios.post("/api/users", {
+        userIds: post.likes,
+      });
+
+      console.log("Liked Users Data:", data); // Check if _id exists
+      setLikedUsers(data);
+      setIsLikesDialogOpen(true);
+    } catch (error) {
+      console.error("Failed to fetch liked users", error);
+    } finally {
+      setIsLoadingLikes(false);
+    }
+  };
 
   const navigateToProfile = (id: string) => {
     router.push(`/dashboard/profile/${id}`);
@@ -480,7 +514,10 @@ const Posts = () => {
             {/* Reaction/Like Section (Ensure Always Visible) */}
             <div className="mt-3 sm:mt-4 border-t border-gray-200 pt-2">
               <div className="flex items-center justify-between text-gray-600 text-xs sm:text-sm px-2">
-                <div className="flex items-center gap-1">
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:underline"
+                  onClick={() => fetchLikedUsers(post._id)}
+                >
                   <HandThumbUpIcon className="w-4 h-4 text-blue-500" />
                   <span className="dark:text-gray-400">
                     {post.likes.length}
@@ -678,6 +715,45 @@ const Posts = () => {
           </div>
         );
       })}
+      {/* Likes Dialog */}
+      <Dialog open={isLikesDialogOpen} onOpenChange={setIsLikesDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Users who liked this post</DialogTitle>
+          </DialogHeader>
+
+          <div className="max-h-[400px] overflow-y-auto">
+            {isLoadingLikes
+              ? Array(3)
+                  .fill(0)
+                  .map((_, i) => (
+                    <div key={i} className="flex items-center gap-3 p-2">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                  ))
+              : likedUsers.map((user) => (
+                  <div
+                    key={user._id}
+                    className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer"
+                    onClick={() => (
+                      console.log(user._id), navigateToProfile(user._id)
+                    )}
+                  >
+                    <Avatar>
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback>{user.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="font-medium">{user.name}</span>
+                  </div>
+                ))}
+
+            {!isLoadingLikes && likedUsers.length === 0 && (
+              <p className="text-center text-gray-500">No likes yet</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

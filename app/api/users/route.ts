@@ -17,3 +17,22 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    await connectDB();
+    const { userIds } = await req.json();
+
+    const users = await User.find({ _id: { $in: userIds } }).select(
+      "_id name avatar"
+    );
+
+    return NextResponse.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch users" },
+      { status: 500 }
+    );
+  }
+}
