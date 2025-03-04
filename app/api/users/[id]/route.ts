@@ -27,7 +27,7 @@ export async function PATCH(
   const { role } = await request.json();
   try {
     await connectDB();
-    const { id } = await params; // Await the params promise before using its properties
+    const { id } = await params;
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { role },

@@ -18,8 +18,12 @@ export const authOptions: AuthOptions = {
         const user = await User.findOne({ email: credentials?.email });
         if (!user) throw new Error("User not found");
         if (user.bannedUntil && new Date(user.bannedUntil) > new Date()) {
-          throw new Error(`User banned until ${user.bannedUntil}`);
+          const banTime = new Date(user.bannedUntil).toLocaleString("en-US", {
+            timeZone: "Africa/Mogadishu",
+          });
+          throw new Error(`User banned until ${banTime}`);
         }
+
         if (
           credentials &&
           user &&

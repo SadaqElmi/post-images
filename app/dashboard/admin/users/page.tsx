@@ -12,8 +12,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Trash2 } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { toast } from "react-hot-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 interface IUser {
   _id: string;
@@ -22,6 +30,7 @@ interface IUser {
   email: string;
   username?: string;
   avatar?: string;
+  bannedUntil?: Date;
 }
 
 const AllUsers = () => {
@@ -30,9 +39,9 @@ const AllUsers = () => {
   // Fetch all users from the API
   const fetchUsers = async () => {
     try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      setUsers(data);
+      const res = await axios.get("/api/users");
+
+      setUsers(res.data);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast.error("Failed to fetch users");
@@ -46,10 +55,10 @@ const AllUsers = () => {
   // Delete a user by id
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
-      if (res.ok) {
+      const res = await axios.delete(`/api/users/${id}`);
+      if (res) {
         toast.success("User deleted");
-        fetchUsers(); // refresh list
+        fetchUsers();
       } else {
         toast.error("Failed to delete user");
       }
@@ -65,22 +74,57 @@ const AllUsers = () => {
     newRole: "user" | "admin"
   ) => {
     try {
-      const res = await fetch(`/api/users/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role: newRole }),
+      const res = await axios.patch(`/api/users/${id}`, {
+        role: newRole,
       });
-      if (res.ok) {
+
+      if (res) {
+        fetchUsers();
         toast.success("User role updated");
-        fetchUsers(); // refresh list
       } else {
         toast.error("Failed to update role");
       }
     } catch (error) {
       console.error("Update role error:", error);
       toast.error("Failed to update role");
+    }
+  };
+
+  const handleBanUser = async (userId: string, hours: number) => {
+    try {
+      const res = await fetch(`/api/users/${userId}/ban`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hours }),
+      });
+
+      if (res.ok) {
+        toast.success(`User banned for ${hours} hours`);
+        fetchUsers();
+      } else {
+        toast.error("Failed to ban user");
+      }
+    } catch (error) {
+      console.error("Ban error:", error);
+      toast.error("Failed to ban user");
+    }
+  };
+
+  const handleUnbanUser = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/users/${userId}/unban`, {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        toast.success("User unbanned");
+        fetchUsers();
+      } else {
+        toast.error("Failed to unban user");
+      }
+    } catch (error) {
+      console.error("Unban error:", error);
+      toast.error("Failed to unban user");
     }
   };
 
@@ -94,10 +138,12 @@ const AllUsers = () => {
               <TableHead>User ID</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {users.map((user, index) => (
               <TableRow key={user._id}>
@@ -134,13 +180,42 @@ const AllUsers = () => {
                     <option value="admin">Admin</option>
                   </select>
                 </TableCell>
-                <TableCell className="text-right flex gap-2 justify-end">
-                  <button
-                    className="text-red-600 hover:text-red-800"
-                    onClick={() => handleDelete(user._id)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                <TableCell>
+                  {user.bannedUntil &&
+                  new Date(user.bannedUntil) > new Date() ? (
+                    <span className="text-red-500">Banned </span>
+                  ) : (
+                    <span className="text-green-500">Active</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button variant="ghost" size="sm">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => handleBanUser(user._id, 1)}
+                      >
+                        Ban User (1 hour)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleBanUser(user._id, 10)}
+                      >
+                        Ban User (10 hours)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleUnbanUser(user._id)}
+                      >
+                        Unban User
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(user._id)}>
+                        Delete User
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
