@@ -4,8 +4,6 @@ import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import usePostStore, { Post, Comment } from "@/app/store/postStore";
 import axios from "axios";
-import { formatPostTime } from "@/lib/formatTime";
-import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import {
@@ -13,33 +11,7 @@ import {
   ChatBubbleLeftIcon,
 } from "@heroicons/react/24/outline";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import {
-  Pencil,
-  Trash2,
-  EyeOff,
-  EllipsisVertical,
-  ShieldAlertIcon,
-} from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Dialog,
@@ -48,14 +20,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ReportDialog } from "./components/ReportDialog";
 import toast from "react-hot-toast";
+import CommentDisplay from "./components/Comment";
+import PostHeader from "./components/PostHeader";
+import PostDescription from "./components/PostDescription";
 
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
-  const isUser = session?.user?.role === "user";
   const router = useRouter();
 
   // State for comment texts (keyed by post ID)
@@ -333,7 +306,11 @@ const Posts = () => {
   return (
     <div className="flex flex-col items-center w-full px-2 sm:px-4 ">
       {posts.map((post) => {
-        const author = typeof post.authorId === "string" ? null : post.authorId;
+        //const author = typeof post.authorId === "string" ? null : post.authorId;
+        const author =
+          typeof post.authorId === "string"
+            ? { _id: post.authorId, name: "..." }
+            : post.authorId;
         const displayedComments = expandedComments[post._id]
           ? post.comments
           : post.comments.slice(0, 2);
@@ -349,175 +326,33 @@ const Posts = () => {
             key={post._id}
             className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto dark:bg-[#252728]"
           >
-            {/* Post Header */}
-            <div className="flex items-center gap-2 sm:gap-3 justify-between">
-              <div className="flex items-center gap-3 cursor-pointer">
-                <Avatar onClick={() => navigateToProfile(authorId)}>
-                  <AvatarImage
-                    src={author?.avatar || undefined}
-                    alt="Profile"
-                    className="object-cover"
-                  />
-                  <AvatarFallback>
-                    {author?.name?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h2
-                    onClick={() => navigateToProfile(authorId)}
-                    className="text-lg font-semibold"
-                  >
-                    {author?.name || "..."}
-                  </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {formatPostTime(post.createdAt)}
-                  </p>
-                </div>
-              </div>
-              {isAdmin && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button className="text-red-600 hover:text-red-800">
-                      <Trash2 size={20} />
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the post.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDeletePost(post._id)}
-                      >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-
-              {isUser && (
-                <div className="flex gap-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <EllipsisVertical />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {isAuthor ? (
-                        <>
-                          {/* Edit Post Option */}
-                          <DropdownMenuItem asChild>
-                            <button
-                              className="flex items-center gap-2 text-blue-600 hover:bg-gray-100 p-2 rounded w-full"
-                              onClick={() => {
-                                setEditingPostId(post._id);
-                                setEditedDescription(post.description);
-                              }}
-                            >
-                              <Pencil size={16} /> Habey Maqaalka
-                            </button>
-                          </DropdownMenuItem>
-
-                          {/* Delete Post Option with AlertDialog */}
-                          <DropdownMenuItem asChild>
-                            <AlertDialog>
-                              <AlertDialogTrigger className="w-full flex items-center gap-2 text-red-600 hover:bg-gray-100 p-2 rounded">
-                                <Trash2 size={16} /> TirTir Maqaalka
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Ma hubtaa gabi ahaanba?
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Tallaabadan lagama noqon karo hadi aad
-                                    Tirtirtid. Tani waxay si joogto ah u tirtiri
-                                    doontaa Maqaalka
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Jooji</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeletePost(post._id)}
-                                  >
-                                    Siiwad
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </DropdownMenuItem>
-                        </>
-                      ) : (
-                        <>
-                          <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                            className="flex items-center gap-2 text-yellow-500 hover:bg-gray-100 p-2 rounded"
-                          >
-                            <div
-                              className="flex justify-between items-center w-full"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <ShieldAlertIcon size={16} />{" "}
-                              {isUser && (
-                                <ReportDialog
-                                  postId={post._id}
-                                  onReport={(reason) =>
-                                    handleReport(post._id, reason)
-                                  }
-                                />
-                              )}{" "}
-                            </div>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded">
-                            <EyeOff size={16} /> Hide Post
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              )}
-            </div>
+            <PostHeader
+              author={author}
+              postId={post._id}
+              isAdmin={isAdmin}
+              isAuthor={isAuthor}
+              onDelete={handleDeletePost}
+              onReport={handleReport}
+              description={post.description} // Add this line
+              onEdit={(postId) => {
+                setEditingPostId(postId);
+                setEditedDescription(post.description); // Use the post's description
+              }}
+            />
 
             {/* Post Description */}
-            {editingPostId === post._id ? (
-              <div className="py-3 sm:py-4">
-                <textarea
-                  value={editedDescription}
-                  onChange={(e) => setEditedDescription(e.target.value)}
-                  className="w-full p-2 border rounded-lg text-base sm:text-lg"
-                  rows={3}
-                />
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={() => handleSavePost(post._id)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingPostId(null);
-                      setEditedDescription("");
-                    }}
-                    className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <p className="py-3 sm:py-4 text-base sm:text-lg">
-                {post.description}
-              </p>
-            )}
+            <PostDescription
+              postId={post._id}
+              description={post.description}
+              isEditing={editingPostId === post._id}
+              editedDescription={editedDescription}
+              setEditedDescription={setEditedDescription}
+              onSave={handleSavePost}
+              onCancel={() => {
+                setEditingPostId(null);
+                setEditedDescription("");
+              }}
+            />
 
             {post.imageUrl &&
               (post.mediaType === "video" ? (
@@ -615,110 +450,19 @@ const Posts = () => {
                 </button>
               </div>
 
-              {displayedComments.map((comment) => {
-                const commentUser =
-                  typeof comment.userId === "object"
-                    ? comment.userId
-                    : { name: "Unknown", avatar: "" };
-                return (
-                  <div
-                    key={comment._id}
-                    className="flex items-start gap-2 sm:gap-3 mt-2 sm:mt-3"
-                  >
-                    <Avatar
-                      className="h-6 w-6 sm:h-8 sm:w-8"
-                      onClick={() => {
-                        if (typeof comment.userId === "string") {
-                          navigateToProfile(comment.userId);
-                        } else if (comment.userId?._id) {
-                          navigateToProfile(comment.userId._id);
-                        }
-                      }}
-                    >
-                      <AvatarImage
-                        src={commentUser?.avatar || undefined}
-                        alt="Profile"
-                        className="object-cover"
-                      />
-                      <AvatarFallback>
-                        {commentUser?.name?.charAt(0).toUpperCase() || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      {commentBeingEdited === comment._id ? (
-                        <input
-                          type="text"
-                          value={editingComment[comment._id] || comment.text}
-                          onChange={(e) =>
-                            setEditingComment({
-                              ...editingComment,
-                              [comment._id]: e.target.value,
-                            })
-                          }
-                          className="border p-1 rounded w-full outline-none  dark:bg-[#333334] dark:border-none dark:outline-none"
-                        />
-                      ) : (
-                        <>
-                          <div className="bg-gray-100 p-2 rounded-md text-sm sm:text-base  dark:bg-[#333334]">
-                            <p className="font-bold text-[12px]">
-                              {commentUser?.name || "Unknown User"}
-                            </p>
-                            <p className="text-[12px]">{comment.text}</p>
-                          </div>
-                          <span className="text-gray-500 text-[10px]">
-                            {formatRelativeTime(comment.createdAt)}
-                          </span>
-                        </>
-                      )}
-                      {typeof comment.userId !== "string" &&
-                        session?.user?.id === comment.userId._id && (
-                          <div className="flex space-x-2 mt-1">
-                            {commentBeingEdited === comment._id ? (
-                              <>
-                                <button
-                                  onClick={() =>
-                                    handleEditComment(post._id, comment._id)
-                                  }
-                                  className="text-blue-500 text-xs"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  onClick={() => setCommentBeingEdited(null)}
-                                  className="text-gray-500 text-xs"
-                                >
-                                  Cancel
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={() => {
-                                    setCommentBeingEdited(comment._id);
-                                    setEditingComment({
-                                      [comment._id]: comment.text,
-                                    });
-                                  }}
-                                  className="text-blue-500 text-xs"
-                                >
-                                  Habey
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleDeleteComment(post._id, comment._id)
-                                  }
-                                  className="text-red-500 text-xs"
-                                >
-                                  TirTir
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        )}
-                    </div>
-                  </div>
-                );
-              })}
+              {displayedComments.map((comment) => (
+                <CommentDisplay
+                  key={comment._id}
+                  comment={comment}
+                  postId={post._id}
+                  onEdit={handleEditComment}
+                  onDelete={handleDeleteComment}
+                  editingComment={editingComment}
+                  commentBeingEdited={commentBeingEdited}
+                  setEditingComment={setEditingComment}
+                  setCommentBeingEdited={setCommentBeingEdited}
+                />
+              ))}
 
               {/* See all / Hide comments button */}
               {post.comments.length > 2 && (
@@ -761,12 +505,13 @@ const Posts = () => {
                   <div
                     key={user._id}
                     className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer"
-                    onClick={() => (
-                      console.log(user._id), navigateToProfile(user._id)
-                    )}
                   >
-                    <Avatar>
-                      <AvatarImage src={user.avatar} />
+                    <Avatar
+                      onClick={() => {
+                        navigateToProfile(user._id);
+                      }}
+                    >
+                      <AvatarImage src={user.avatar} className="object-cover" />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
                     </Avatar>
                     <span className="font-medium">{user.name}</span>

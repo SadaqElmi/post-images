@@ -10,13 +10,14 @@ import {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ShieldAlertIcon } from "lucide-react";
 
 export function ReportDialog({
   postId,
   onReport,
 }: {
   postId: string;
-  onReport: (reason: string) => Promise<void>;
+  onReport: (reason: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -36,7 +37,10 @@ export function ReportDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="text-red-500 text-xs">Report User</button>
+        <button className="text-red-500 text-xs flex gap-2">
+          <ShieldAlertIcon size={16} />
+          Report User
+        </button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

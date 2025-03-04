@@ -7,8 +7,8 @@ export interface User {
 }
 
 export interface Comment {
-  _id: string; // Add this line
-  userId: string | User;
+  _id: string;
+  userId: User;
   text: string;
   createdAt: string;
 }
