@@ -24,12 +24,17 @@ import toast from "react-hot-toast";
 import CommentDisplay from "./components/Comment";
 import PostHeader from "./components/PostHeader";
 import PostDescription from "./components/PostDescription";
+import { translations } from "@/utils/translations";
+import useLanguageStore from "@/app/store/languageStore";
 
 const Posts = () => {
   const { posts, setPosts } = usePostStore();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
   const router = useRouter();
+
+  const { language } = useLanguageStore();
+  const t = translations[language];
 
   // State for comment texts (keyed by post ID)
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
@@ -385,7 +390,7 @@ const Posts = () => {
                   </span>
                 </div>
                 <span className="dark:text-gray-400">
-                  {post.comments.length} faallooyinka
+                  {post.comments.length} {t.comments}
                 </span>
               </div>
               <div className="flex justify-around border-t border-gray-200 mt-2 pt-2">
@@ -399,14 +404,14 @@ const Posts = () => {
                   }`}
                 >
                   <HandThumbUpIcon className="w-5 h-5" />
-                  <span>ka helid</span>
+                  <span>{t.like}</span>
                 </button>
                 <button
                   onClick={() => commentInputRefs.current[post._id]?.focus()}
                   className="flex items-center gap-1 px-4 py-2 hover:text-blue-500 dark:text-gray-400"
                 >
                   <ChatBubbleLeftIcon className="w-5 h-5" />
-                  <span>Faallo</span>
+                  <span>{t.comment}</span>
                 </button>
               </div>
             </div>
@@ -440,14 +445,14 @@ const Posts = () => {
                     }))
                   }
                   className="border p-2 rounded w-full outline-none text-sm sm:text-base dark:bg-[#333334] dark:outline-none dark:border-none"
-                  placeholder="qor faallo..."
+                  placeholder={t.input}
                 />
                 <button
                   onClick={() => handleCommentSubmit(post._id)}
                   disabled={commentLoading === post._id}
                   className="bg-blue-500 text-white px-3 py-1 rounded    dark:bg-blue-500 dark:text-white"
                 >
-                  {commentLoading === post._id ? "..." : "Maqaal"}
+                  {commentLoading === post._id ? "..." : t.btn}
                 </button>
               </div>
 
@@ -476,9 +481,7 @@ const Posts = () => {
                   }
                   className="text-blue-500 text-xs sm:text-sm mt-1"
                 >
-                  {expandedComments[post._id]
-                    ? "Hide comments"
-                    : `See all comments`}
+                  {expandedComments[post._id] ? t.hide : t.all}
                 </button>
               )}
             </div>
@@ -489,7 +492,7 @@ const Posts = () => {
       <Dialog open={isLikesDialogOpen} onOpenChange={setIsLikesDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Users who liked this post</DialogTitle>
+            <DialogTitle>{t.usersLikes}</DialogTitle>
           </DialogHeader>
 
           <div className="max-h-[400px] overflow-y-auto">
@@ -520,7 +523,7 @@ const Posts = () => {
                 ))}
 
             {!isLoadingLikes && likedUsers.length === 0 && (
-              <p className="text-center text-gray-500">No likes yet</p>
+              <p className="text-center text-gray-500">{t.nolikes}</p>
             )}
           </div>
         </DialogContent>

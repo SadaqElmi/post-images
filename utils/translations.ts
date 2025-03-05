@@ -1,3 +1,5 @@
+import { comment } from "postcss";
+
 // utils/translations.ts
 export const translations = {
   en: {
@@ -12,6 +14,15 @@ export const translations = {
     logout: "Logout",
     darkMode: "Dark Mode",
     language: "Language",
+    usersLikes: "Users who liked this post",
+    nolikes: "No likes yet",
+    input: "write comment...",
+    btn: "Post",
+    hide: "Hide comments",
+    all: "See all comments",
+    like: "liked",
+    comments: "comments",
+    comment: "comment",
   },
   so: {
     adminPanel: "Maamulka Admin",
@@ -25,5 +36,14 @@ export const translations = {
     logout: "Kabixid",
     darkMode: "Madowga",
     language: "Luuqada",
+    usersLikes: "Isticmaalayasha Kahelay Maqaal kan",
+    nolikes: "Majiro Kahelid",
+    input: "qor faallo...",
+    btn: "Maqaal",
+    hide: "Qari Maqaaloyinka",
+    all: "Arag dhamaan Maqaaladda",
+    like: "Ka Helid",
+    comments: "faallooyinka",
+    comment: "Faallo",
   },
 };
