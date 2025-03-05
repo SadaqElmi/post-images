@@ -3,7 +3,6 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/app/models/User";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/config/auth";
-// app/api/users/[id]/unban/route.ts
 
 export async function PUT(
   request: Request,

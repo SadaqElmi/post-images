@@ -1,3 +1,4 @@
+// pages/api/auth/[...nextauth].ts or wherever your NextAuth configuration is defined
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/app/models/User";
@@ -17,6 +18,12 @@ export const authOptions: AuthOptions = {
         await connectDB();
         const user = await User.findOne({ email: credentials?.email });
         if (!user) throw new Error("User not found");
+
+        // Check if the user is verified
+        if (!user.verified) {
+          throw new Error("Please verify your email before logging in");
+        }
+
         if (user.bannedUntil && new Date(user.bannedUntil) > new Date()) {
           const banTime = new Date(user.bannedUntil).toLocaleString("en-US", {
             timeZone: "Africa/Mogadishu",
@@ -27,6 +34,7 @@ export const authOptions: AuthOptions = {
         if (
           credentials &&
           user &&
+          user.password &&
           (await bcrypt.compare(credentials.password, user.password))
         ) {
           return {
@@ -56,12 +64,12 @@ export const authOptions: AuthOptions = {
           existingUser = new User({
             name: user.name,
             email: user.email,
-            avatar: user.image, // Google returns the image as `user.image`
-            role: "user", // default role
+            avatar: user.image,
+            role: "user",
+            verified: true, // Automatically verify Google users
           });
           await existingUser.save();
         }
-        // Overwrite the Google id with the MongoDB _id
         user.id = existingUser._id.toString();
         user.role = existingUser.role;
         user.avatar = existingUser.avatar;
@@ -75,7 +83,6 @@ export const authOptions: AuthOptions = {
       }
       return true;
     },
-
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -86,7 +93,6 @@ export const authOptions: AuthOptions = {
       }
       return token;
     },
-
     async session({ session, token }) {
       const freshUser = await User.findById(token.id);
       session.user.id = token.id as string;
@@ -100,6 +106,12 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: "jwt",
+    // Set session expiration to 1 hour
+    maxAge: 60 * 60, // 1 hour in seconds
+  },
+  jwt: {
+    // Also set JWT expiration
+    maxAge: 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

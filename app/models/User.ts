@@ -11,6 +11,7 @@ export interface IUser extends Document {
   darkMode: boolean;
   language: "en" | "so";
   bannedUntil?: Date;
+  verified: boolean;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -24,6 +25,7 @@ const UserSchema = new Schema<IUser>(
     darkMode: { type: Boolean, default: false },
     language: { type: String, enum: ["en", "so"], default: "so" },
     bannedUntil: { type: Date },
+    verified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
