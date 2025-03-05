@@ -505,7 +505,7 @@ const Posts = () => {
               : likedUsers.map((user) => (
                   <div
                     key={user._id}
-                    className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer"
+                    className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-[#252728] rounded cursor-pointer"
                   >
                     <Avatar
                       onClick={() => {
