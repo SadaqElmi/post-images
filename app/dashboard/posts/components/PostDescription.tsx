@@ -22,7 +22,7 @@ const PostDescription = ({
       <textarea
         value={editedDescription}
         onChange={(e) => setEditedDescription(e.target.value)}
-        className="w-full p-2 border rounded-lg text-base sm:text-lg"
+        className="w-full p-2 border rounded-lg text-base sm:text-lg dark:bg-[#252728]"
         rows={3}
       />
       <div className="flex gap-2 mt-2">
@@ -34,7 +34,7 @@ const PostDescription = ({
         </button>
         <button
           onClick={onCancel}
-          className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
+          className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-[#3d4041]"
         >
           Cancel
         </button>

@@ -112,7 +112,7 @@ const Profile = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Cover Photo */}
-      <div className="relative w-full h-[312px] sm:h-[360px] md:h-80 bg-gray-300 rounded-lg overflow-hidden">
+      <div className="relative w-full h-[312px] sm:h-[360px] md:h-80 bg-gray-300 rounded-lg overflow-hidden dark:bg-[#252728]">
         <Image
           src={coverImage}
           alt="Cover"
@@ -135,15 +135,15 @@ const Profile = () => {
           </Button>
           {selectedCoverFile && (
             <div className="mt-4 flex gap-2">
-              <Button onClick={handleSaveCoverImage}>kaydin Dabool</Button>
-              <Button onClick={handleCancelCoverImage}>Joojin Dabool</Button>
+              <Button onClick={handleSaveCoverImage}>kaydin </Button>
+              <Button onClick={handleCancelCoverImage}>Joojin </Button>
             </div>
           )}
         </div>
       </div>
 
       {/* Profile Header */}
-      <div className="relative flex flex-col items-center mt-[-80px] md:mt-[-100px] pb-4">
+      <div className="relative flex flex-col items-center mt-[-80px] md:mt-[-100px] pb-4 ">
         {/* Avatar */}
         <Avatar className="w-32 h-32 border-4 border-white rounded-full shadow-lg">
           <AvatarImage src={image} alt="Profile" className="object-cover" />
@@ -158,9 +158,9 @@ const Profile = () => {
         </h1>
 
         {/* Edit Profile Button */}
-        <div className="mt-2">
+        <div className="mt-2 ">
           <Button>
-            <label className="cursor-pointer flex items-center gap-2">
+            <label className="cursor-pointer flex items-center gap-2 ">
               <Pencil className="mr-2 h-4 w-4" />
               <span>Badal Dadool ka</span>
               <input

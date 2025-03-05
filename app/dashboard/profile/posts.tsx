@@ -307,7 +307,7 @@ const ProfilePage = () => {
           return (
             <div
               key={post._id}
-              className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto"
+              className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto dark:bg-[#252728]"
             >
               <div
                 key={post._id}
@@ -328,7 +328,7 @@ const ProfilePage = () => {
                     <h2 className="text-lg font-semibold">
                       {session?.user?.name || "..."}
                     </h2>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-400">
                       {formatPostTime(post.createdAt)}
                     </p>
                   </div>
@@ -393,7 +393,7 @@ const ProfilePage = () => {
                   <textarea
                     value={editedDescription}
                     onChange={(e) => setEditedDescription(e.target.value)}
-                    className="w-full p-2 border rounded-lg text-base sm:text-lg"
+                    className="w-full p-2 border rounded-lg text-base sm:text-lg  dark:bg-[#252728]"
                     rows={3}
                   />
                   <div className="flex gap-2 mt-2">
@@ -408,7 +408,7 @@ const ProfilePage = () => {
                         setEditingPostId(null);
                         setEditedDescription("");
                       }}
-                      className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
+                      className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300  dark:bg-[#323536]"
                     >
                       Cancel
                     </button>
@@ -419,23 +419,24 @@ const ProfilePage = () => {
                   {post.description}
                 </p>
               )}
-              {/* Post Image */}
-              {post.mediaType === "video" ? (
-                <video controls className="w-full rounded-lg">
-                  <source src={post.imageUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <Image
-                  src={post.imageUrl || ""}
-                  alt="Post media"
-                  height={1536}
-                  width={2048}
-                  className="rounded-lg w-full h-auto object-contain"
-                  priority
-                />
-              )}
 
+              {/* Post Image */}
+              {post.imageUrl &&
+                (post.mediaType === "video" ? (
+                  <video controls className="w-full rounded-lg">
+                    <source src={post.imageUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <Image
+                    src={post.imageUrl}
+                    alt="Post media"
+                    height={1536}
+                    width={2048}
+                    className="rounded-lg w-full h-auto object-contain"
+                    priority
+                  />
+                ))}
               {/* Reaction/Like Section (Ensure Always Visible) */}
               <div className="mt-3 sm:mt-4 border-t border-gray-200 pt-2">
                 <div className="flex items-center justify-between text-gray-600 text-xs sm:text-sm px-2">
@@ -493,7 +494,7 @@ const ProfilePage = () => {
                         [post._id]: e.target.value,
                       }))
                     }
-                    className="border p-2 rounded w-full outline-none text-sm sm:text-base"
+                    className="border p-2 rounded w-full outline-none text-sm sm:text-base dark:bg-[#333334] dark:border-none dark:outline-none"
                     placeholder="qor faallo..."
                   />
                   <button
@@ -536,11 +537,11 @@ const ProfilePage = () => {
                                 [comment._id]: e.target.value,
                               })
                             }
-                            className="border p-1 rounded w-full outline-none"
+                            className="border p-1 rounded w-full outline-none dark:bg-[#333334] dark:border-none dark:outline-none"
                           />
                         ) : (
                           <>
-                            <div className="bg-gray-100 p-2 rounded-md text-sm sm:text-base">
+                            <div className="bg-gray-100 p-2 rounded-md text-sm sm:text-base dark:bg-[#333334] dark:border-none dark:outline-none">
                               <p className="font-semibold">
                                 {commentUser?.name || "Unknown User"}
                               </p>
@@ -641,22 +642,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-//<div
-//  key={post._id}
-//  className="mb-4 border p-4 rounded-lg shadow-sm"
-//>
-//  <p className="text-lg font-medium">{post.description}</p>
-//  {post.imageUrl && (
-//    <div className="mt-2">
-//      <img
-//        src={post.imageUrl}
-//        alt="Post Image"
-//        className="w-full h-auto rounded"
-//      />
-//    </div>
-//  )}
-//  <div className="mt-2 text-sm text-gray-500">
-//    {new Date(post.createdAt).toLocaleString()}
-//  </div>
-//</div>

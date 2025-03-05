@@ -327,6 +327,7 @@ const Posts = () => {
             className="w-full max-w-[600px] bg-white p-3 sm:p-4 rounded-lg shadow-md my-3 sm:my-4 mx-auto dark:bg-[#252728]"
           >
             <PostHeader
+              createdAt={post.createdAt}
               author={author}
               postId={post._id}
               isAdmin={isAdmin}
@@ -444,7 +445,7 @@ const Posts = () => {
                 <button
                   onClick={() => handleCommentSubmit(post._id)}
                   disabled={commentLoading === post._id}
-                  className="bg-blue-500 text-white px-3 py-1 rounded  dark:bg-[#333334]"
+                  className="bg-blue-500 text-white px-3 py-1 rounded    dark:bg-blue-500 dark:text-white"
                 >
                   {commentLoading === post._id ? "..." : "Maqaal"}
                 </button>

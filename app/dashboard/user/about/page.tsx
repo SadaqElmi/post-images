@@ -4,9 +4,9 @@ import Link from "next/link";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 dark:bg-[#252728]">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8 dark:text-white">
           Xog kusaab San Mashruucan
         </h1>
 
@@ -24,10 +24,10 @@ const About = () => {
             </div>
           </div>
           <div className="w-full md:w-2/3">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 dark:text-white">
               Salaan, Waxan Ahay Sadaq Elmi Abdulle
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
+            <p className="text-gray-600 text-lg leading-relaxed dark:text-white">
               Waxaan ahay horumariye full-stack ah oo jecel abuurista websaydhyo
               wax ku ool ah. Mashruucan waxa uu adeegsadaa Next.js iyo Tailwind
               CSS, isaga oo diiradda saaraya khibrad casri ah oo bulsho ah oo
@@ -36,8 +36,8 @@ const About = () => {
           </div>
         </div>
 
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <section className="bg-white rounded-lg shadow-md p-6 mb-8 dark:bg-[#252728]">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4  dark:text-white">
             Astaamaha Isticmaalaha
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -68,8 +68,8 @@ const About = () => {
           </ul>
         </section>
 
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <section className="bg-white rounded-lg shadow-md p-6 mb-8 dark:bg-[#252728]">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 dark:text-white">
             Astaamaha Maamulaha
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,8 +100,8 @@ const About = () => {
           </ul>
         </section>
 
-        <section className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <section className="bg-white rounded-lg shadow-md p-6 dark:bg-[#252728]">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 dark:text-white">
             Tiknoolajiyada la adeegsaday
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -119,7 +119,10 @@ const About = () => {
               "bcryptjs",
               "JWT",
             ].map((tech, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-lg">
+              <div
+                key={index}
+                className="p-4 bg-gray-50 rounded-lg dark:bg-[#252728]"
+              >
                 <p className="font-semibold text-blue-600">{tech}</p>
               </div>
             ))}

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { ReportDialog } from "./ReportDialog";
+import { formatPostTime } from "@/lib/formatTime";
 
 interface AuthorProps {
   _id: string; // Now required
@@ -27,6 +28,7 @@ interface AuthorProps {
 }
 
 interface PostHeaderProps {
+  createdAt: string;
   author: AuthorProps;
   postId: string;
   isAdmin: boolean;
@@ -38,6 +40,7 @@ interface PostHeaderProps {
 }
 
 const PostHeader = ({
+  createdAt,
   author,
   postId,
   isAdmin,
@@ -73,6 +76,9 @@ const PostHeader = ({
           >
             {author?.name || "..."}
           </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {formatPostTime(createdAt)}
+          </p>
         </div>
       </div>
 

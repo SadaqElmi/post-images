@@ -121,7 +121,7 @@ const PostsComponent = ({ userId }: { userId: string }) => {
         return (
           <div
             key={post._id}
-            className="bg-white p-4 rounded-lg shadow-md my-4"
+            className="bg-white p-4 rounded-lg shadow-md my-4 dark:bg-[#333334] dark:border-none dark:outline-none"
           >
             {/* Post Header */}
             <div className="flex items-center gap-3 justify-between">
@@ -203,7 +203,7 @@ const PostsComponent = ({ userId }: { userId: string }) => {
                 <textarea
                   value={editedDescription}
                   onChange={(e) => setEditedDescription(e.target.value)}
-                  className="w-full p-2 border rounded-lg text-base sm:text-lg"
+                  className="w-full p-2 border rounded-lg text-base sm:text-lg dark:bg-[#333334] "
                   rows={3}
                 />
                 <div className="flex gap-2 mt-2">
@@ -218,7 +218,7 @@ const PostsComponent = ({ userId }: { userId: string }) => {
                       setEditingPostId(null);
                       setEditedDescription("");
                     }}
-                    className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
+                    className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-[#48484b] "
                   >
                     Cancel
                   </button>

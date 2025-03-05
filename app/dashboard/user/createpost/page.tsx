@@ -69,7 +69,7 @@ const CreatePost = () => {
 
   return (
     <div className="flex justify-center items-center py-4">
-      <div className="bg-white p-4 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-white p-4 rounded-lg shadow-md w-full max-w-md dark:bg-[#252728]">
         {/* Post Header */}
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
@@ -83,7 +83,7 @@ const CreatePost = () => {
             </AvatarFallback>
           </Avatar>
           <textarea
-            className="w-full border-none focus:ring-0 text-sm bg-gray-100 rounded-xl p-3 resize-none"
+            className="w-full border-none focus:ring-0 text-sm  bg-gray-100 rounded-xl p-3 resize-none dark:bg-[#252728] dark:border dark:border-white dark:border-solid"
             placeholder="Maxaa maskaxdaada ku jira?"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -150,7 +150,7 @@ const CreatePost = () => {
           <Button
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:bg-blue-500 dark:text-white"
           >
             {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Maqaal"}
           </Button>
