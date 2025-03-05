@@ -112,11 +112,9 @@ const AllUsers = () => {
 
   const handleUnbanUser = async (userId: string) => {
     try {
-      const res = await fetch(`/api/users/${userId}/unban`, {
-        method: "POST",
-      });
+      const res = await axios.put(`/api/users/${userId}/unban`);
 
-      if (res.ok) {
+      if (res) {
         toast.success("User unbanned");
         fetchUsers();
       } else {
