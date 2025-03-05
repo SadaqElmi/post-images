@@ -91,7 +91,7 @@ const Register = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm sm:text-base">
-                  erayga sirta ah
+                  furaha sirta ah
                 </Label>
                 <Input
                   id="password"
@@ -108,7 +108,7 @@ const Register = () => {
                   htmlFor="confirmPassword"
                   className="text-sm sm:text-base"
                 >
-                  Xaqijin erayga sirta ah
+                  Xaqijin furaha sirta ah
                 </Label>
                 <Input
                   id="confirmPassword"
