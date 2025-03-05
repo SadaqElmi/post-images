@@ -164,9 +164,6 @@ const PostHeader = ({
                     />
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-2 text-gray-500 hover:bg-gray-100 p-2 rounded">
-                  <EyeOff size={16} /> Hide Post
-                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
