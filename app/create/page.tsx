@@ -125,7 +125,7 @@ const Register = () => {
                 className="w-full h-10 sm:h-11 text-sm sm:text-base"
                 disabled={loading}
               >
-                {loading ? "Creating Account..." : "Register"}
+                {loading ? "Samey Akon..." : "Abuur"}
               </Button>
 
               <div className="text-center text-sm sm:text-base">
