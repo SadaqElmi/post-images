@@ -172,7 +172,7 @@ const AllUsers = () => {
                         e.target.value as "user" | "admin"
                       )
                     }
-                    className="border border-gray-300 p-1 rounded"
+                    className="border border-gray-300 p-1 rounded  dark:bg-[#252728]"
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
