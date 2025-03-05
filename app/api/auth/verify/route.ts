@@ -38,20 +38,8 @@ export async function GET(req: Request) {
     user.verified = true;
     await user.save();
 
-    const htmlContent = `
-      <html>
-        <head><title>Email Verified</title></head>
-        <body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
-          <h1>Email verified successfully!</h1>
-          <p>You can now <a href="${process.env.NEXT_PUBLIC_APP_URL}">go back to the website</a>.</p>
-        </body>
-      </html>
-    `;
-
-    return new NextResponse(htmlContent, {
-      status: 200,
-      headers: { "Content-Type": "text/html" },
-    });
+    // Redirect to your "Verified" page
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/verified`);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
