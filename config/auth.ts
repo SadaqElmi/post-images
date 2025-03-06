@@ -21,7 +21,9 @@ export const authOptions: AuthOptions = {
 
         // Check if the user is verified
         if (!user.verified) {
-          throw new Error("Please verify your email before logging in");
+          throw new Error(
+            "Please check your email to verify before logging in"
+          );
         }
 
         if (user.bannedUntil && new Date(user.bannedUntil) > new Date()) {
