@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -22,6 +23,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,35 +92,57 @@ const Register = () => {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <Label htmlFor="password" className="text-sm sm:text-base">
                   furaha sirta ah
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-10 sm:h-11 text-sm sm:text-base"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-10 sm:h-11 text-sm sm:text-base pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <Label
                   htmlFor="confirmPassword"
                   className="text-sm sm:text-base"
                 >
                   Xaqijin furaha sirta ah
                 </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="h-10 sm:h-11 text-sm sm:text-base"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="h-10 sm:h-11 text-sm sm:text-base pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-3 flex items-center"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <Button
